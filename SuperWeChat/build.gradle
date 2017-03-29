@@ -29,6 +29,12 @@ android {
         multiDexEnabled true
     }
 
+    //适配所有类型的API
+    configurations {
+        all*.exclude group: 'com.android.support', module: 'support-v4'
+        all*.exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
