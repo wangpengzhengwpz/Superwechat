@@ -133,6 +133,7 @@ public class RegisterActivity extends BaseActivity {
                         }
                     });
                 } catch (final HyphenateException e) {
+                    unregister();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (!RegisterActivity.this.isFinishing())
