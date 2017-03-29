@@ -70,6 +70,11 @@
             </intent-filter>
         </activity>
 
+        <!-- 欢迎 -->
+        <activity
+            android:name="cn.ucai.superwechat.ui.GuideActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide" />
         <!-- 登陆 -->
         <activity
             android:name="cn.ucai.superwechat.ui.LoginActivity"
