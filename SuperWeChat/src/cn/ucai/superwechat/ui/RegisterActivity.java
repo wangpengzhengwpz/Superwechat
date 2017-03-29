@@ -13,12 +13,6 @@
  */
 package cn.ucai.superwechat.ui;
 
-import com.hyphenate.EMError;
-import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.SuperWeChatHelper;
-import cn.ucai.superwechat.R;
-
-import com.hyphenate.exceptions.HyphenateException;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -27,9 +21,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
+
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.SuperWeChatHelper;
+
 /**
  * register screen
- * 
+ *
  */
 public class RegisterActivity extends BaseActivity {
 	private EditText userNameEditText;
