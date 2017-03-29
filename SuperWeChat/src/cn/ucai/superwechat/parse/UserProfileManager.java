@@ -4,15 +4,23 @@ import android.content.Context;
 
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.SuperWeChatHelper;
-import cn.ucai.superwechat.utils.PreferenceManager;
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserProfileManager {
+import cn.ucai.superwechat.SuperWeChatHelper;
+import cn.ucai.superwechat.db.IUserModel;
+import cn.ucai.superwechat.db.OnCompleteListener;
+import cn.ucai.superwechat.db.UserModel;
+import cn.ucai.superwechat.utils.L;
+import cn.ucai.superwechat.utils.PreferenceManager;
+import cn.ucai.superwechat.utils.Result;
+import cn.ucai.superwechat.utils.ResultUtils;
 
+public class UserProfileManager {
+	private static final String TAG = UserProfileManager.class.getSimpleName();
 	/**
 	 * application context
 	 */
@@ -32,6 +40,8 @@ public class UserProfileManager {
 	private boolean isSyncingContactInfosWithServer = false;
 
 	private EaseUser currentUser;
+	private User currentAppUser;
+	IUserModel userModel;
 
 	public UserProfileManager() {
 	}
@@ -40,9 +50,11 @@ public class UserProfileManager {
 		if (sdkInited) {
 			return true;
 		}
+		appContext = context;
 		ParseManager.getInstance().onInit(context);
 		syncContactInfosListeners = new ArrayList<SuperWeChatHelper.DataSyncListener>();
 		sdkInited = true;
+		userModel = new UserModel();
 		return true;
 	}
 
@@ -137,6 +149,27 @@ public class UserProfileManager {
 			setCurrentUserAvatar(avatarUrl);
 		}
 		return avatarUrl;
+	}
+
+	public void asyncGetCurrentAppUserInfo() {
+		userModel.loadUserInfo(appContext, EMClient.getInstance().getCurrentUser(),
+				new OnCompleteListener<String>() {
+			@Override
+			public void onSuccess(String s) {
+				if (s != null) {
+					Result result = ResultUtils.getResultFromJson(s, User.class);
+					if (result != null && result.isRetMsg()) {
+						User user = (User) result.getRetData();
+						L.e(TAG, "asyncGetCurrentAppUserInfo,user=" + user);
+					}
+				}
+			}
+
+			@Override
+			public void onError(String error) {
+
+			}
+		});
 	}
 
 	public void asyncGetCurrentUserInfo() {
