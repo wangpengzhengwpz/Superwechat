@@ -121,6 +121,7 @@ public class UserProfileManager {
 	public synchronized void reset() {
 		isSyncingContactInfosWithServer = false;
 		currentUser = null;
+		currentAppUser = null;
 		PreferenceManager.getInstance().removeCurrentUserInfo();
 	}
 
@@ -133,6 +134,17 @@ public class UserProfileManager {
 			currentUser.setAvatar(getCurrentUserAvatar());
 		}
 		return currentUser;
+	}
+
+	public synchronized User getCurrentAppUserInfo() {
+		if (currentAppUser == null) {
+			String username = EMClient.getInstance().getCurrentUser();
+			currentAppUser = new User(username);
+			String nick = getCurrentUserNick();
+			currentAppUser.setMUserNick((nick != null) ? nick : username);
+
+		}
+		return currentAppUser;
 	}
 
 	public boolean updateCurrentUserNickName(final String nickname) {
@@ -161,6 +173,10 @@ public class UserProfileManager {
 					if (result != null && result.isRetMsg()) {
 						User user = (User) result.getRetData();
 						L.e(TAG, "asyncGetCurrentAppUserInfo,user=" + user);
+						if (user != null) {
+							setCurrentAppUserNick(user.getMUserNick());
+							setCurrentAppUserAvatar(user.getAvatar());
+						}
 					}
 				}
 			}
@@ -200,6 +216,16 @@ public class UserProfileManager {
 
 	private void setCurrentUserAvatar(String avatar) {
 		getCurrentUserInfo().setAvatar(avatar);
+		PreferenceManager.getInstance().setCurrentUserAvatar(avatar);
+	}
+
+	private void setCurrentAppUserNick(String nickname) {
+		getCurrentAppUserInfo().setMUserNick(nickname);
+		PreferenceManager.getInstance().setCurrentUserNick(nickname);
+	}
+
+	private void setCurrentAppUserAvatar(String avatar) {
+		getCurrentAppUserInfo().setAvatar(avatar);
 		PreferenceManager.getInstance().setCurrentUserAvatar(avatar);
 	}
 
