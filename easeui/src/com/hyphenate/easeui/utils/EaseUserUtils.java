@@ -10,6 +10,7 @@ import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.controller.EaseUI;
 import com.hyphenate.easeui.controller.EaseUI.EaseUserProfileProvider;
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.domain.User;
 
 public class EaseUserUtils {
     
@@ -17,6 +18,18 @@ public class EaseUserUtils {
     
     static {
         userProvider = EaseUI.getInstance().getUserProfileProvider();
+    }
+
+    /**
+     * get User according username
+     * @param username
+     * @return
+     */
+    public static User getAppUserInfo(String username){
+        if(userProvider != null)
+            return userProvider.getAppUser(username);
+
+        return null;
     }
     
     /**
