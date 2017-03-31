@@ -73,4 +73,9 @@ public class ProfileFragment extends Fragment {
     public void money() {
         RedPacketUtil.startChangeActivity(getContext());
     }
+
+    @OnClick(R.id.layout_profile_view)
+    public void goroUserInfo() {
+        MFGT.gotoUserInfo(getActivity(), true, EMClient.getInstance().getCurrentUser());
+    }
 }

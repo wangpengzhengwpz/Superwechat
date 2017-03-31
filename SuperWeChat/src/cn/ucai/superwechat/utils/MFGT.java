@@ -9,6 +9,7 @@ import cn.ucai.superwechat.ui.LoginActivity;
 import cn.ucai.superwechat.ui.MainActivity;
 import cn.ucai.superwechat.ui.RegisterActivity;
 import cn.ucai.superwechat.ui.SettingsActivity;
+import cn.ucai.superwechat.ui.UserProfileActivity;
 
 
 /**
@@ -54,5 +55,11 @@ public class MFGT {
 
     public static void gotoSettings(Activity activity) {
         startActivity(activity, SettingsActivity.class);
+    }
+
+    public static void gotoUserInfo(Activity activity, boolean setting, String username) {
+        startActivity(activity, new Intent(activity, UserProfileActivity.class)
+                .putExtra("setting", setting)
+                .putExtra("username", username));
     }
 }
