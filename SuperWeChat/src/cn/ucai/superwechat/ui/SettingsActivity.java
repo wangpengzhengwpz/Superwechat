@@ -34,6 +34,7 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.widget.EaseSwitchButton;
+import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.util.EMLog;
 
 import java.io.File;
@@ -122,128 +123,78 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.em_fragment_conversation_settings);
 
-		rl_switch_notification = (RelativeLayout) findViewById(R.id.rl_switch_notification);
-		rl_switch_sound = (RelativeLayout) findViewById(R.id.rl_switch_sound);
-		rl_switch_vibrate = (RelativeLayout) findViewById(R.id.rl_switch_vibrate);
-		rl_switch_speaker = (RelativeLayout) findViewById(R.id.rl_switch_speaker);
-		rl_switch_chatroom_leave = (RelativeLayout) findViewById(R.id.rl_switch_chatroom_owner_leave);
-		rl_switch_delete_msg_when_exit_group = (RelativeLayout) findViewById(R.id.rl_switch_delete_msg_when_exit_group);
-		rl_switch_auto_accept_group_invitation = (RelativeLayout) findViewById(R.id.rl_switch_auto_accept_group_invitation);
-		rl_switch_adaptive_video_encode = (RelativeLayout) findViewById(R.id.rl_switch_adaptive_video_encode);
-		rl_custom_appkey = (RelativeLayout) findViewById(R.id.rl_custom_appkey);
-		rl_custom_server = (RelativeLayout) findViewById(R.id.rl_custom_server);
-		rl_push_settings = (RelativeLayout) findViewById(R.id.rl_push_settings);
+		initView();
+		setListener();
+		setSettings();
+		hideSoftKeyboard();
 
-		ll_call_option = (LinearLayout) findViewById(R.id.ll_call_option);
+	}
 
-		rl_mail_log = (RelativeLayout) findViewById(R.id.rl_mail_log);
-		
-		notifySwitch = (EaseSwitchButton) findViewById(R.id.switch_notification);
-		soundSwitch = (EaseSwitchButton) findViewById(R.id.switch_sound);
-		vibrateSwitch = (EaseSwitchButton) findViewById(R.id.switch_vibrate);
-		speakerSwitch = (EaseSwitchButton) findViewById(R.id.switch_speaker);
-		ownerLeaveSwitch = (EaseSwitchButton) findViewById(R.id.switch_owner_leave);
-		switch_delete_msg_when_exit_group = (EaseSwitchButton) findViewById(R.id.switch_delete_msg_when_exit_group);
-		switch_auto_accept_group_invitation = (EaseSwitchButton) findViewById(R.id.switch_auto_accept_group_invitation);
-		switch_adaptive_video_encode = (EaseSwitchButton) findViewById(R.id.switch_adaptive_video_encode);
-		logoutBtn = (Button) findViewById(R.id.btn_logout);
-		if(!TextUtils.isEmpty(EMClient.getInstance().getCurrentUser())){
-			logoutBtn.setText(getString(R.string.button_logout) + "(" + EMClient.getInstance().getCurrentUser() + ")");
-		}
-		customServerSwitch = (EaseSwitchButton) findViewById(R.id.switch_custom_server);
-		customAppkeySwitch = (EaseSwitchButton) findViewById(R.id.switch_custom_appkey);
-
-		textview1 = (TextView) findViewById(R.id.textview1);
-		textview2 = (TextView) findViewById(R.id.textview2);
-		
-		blacklistContainer = (LinearLayout) findViewById(R.id.ll_black_list);
-		llDiagnose=(LinearLayout) findViewById(R.id.ll_diagnose);
-		pushNick=(LinearLayout) findViewById(R.id.ll_set_push_nick);
-		edit_custom_appkey = (EditText) findViewById(R.id.edit_custom_appkey);
-
+	private void setSettings() {
 		settingsModel = SuperWeChatHelper.getInstance().getModel();
 		chatOptions = EMClient.getInstance().getOptions();
-		
-		blacklistContainer.setOnClickListener(this);
-		rl_switch_notification.setOnClickListener(this);
-		rl_switch_sound.setOnClickListener(this);
-		rl_switch_vibrate.setOnClickListener(this);
-		rl_switch_speaker.setOnClickListener(this);
-		customAppkeySwitch.setOnClickListener(this);
-		customServerSwitch.setOnClickListener(this);
-		rl_custom_server.setOnClickListener(this);
-		logoutBtn.setOnClickListener(this);
-		llDiagnose.setOnClickListener(this);
-		pushNick.setOnClickListener(this);
-		rl_switch_chatroom_leave.setOnClickListener(this);
-		rl_switch_delete_msg_when_exit_group.setOnClickListener(this);
-		rl_switch_auto_accept_group_invitation.setOnClickListener(this);
-		rl_switch_adaptive_video_encode.setOnClickListener(this);
-		rl_push_settings.setOnClickListener(this);
-		ll_call_option.setOnClickListener(this);
-		rl_mail_log.setOnClickListener(this);
 
 		// the vibrate and sound notification are allowed or not?
 		if (settingsModel.getSettingMsgNotification()) {
 			notifySwitch.openSwitch();
 		} else {
-		    notifySwitch.closeSwitch();
+			notifySwitch.closeSwitch();
 		}
 
 		// sound notification is switched on or not?
 		if (settingsModel.getSettingMsgSound()) {
-		    soundSwitch.openSwitch();
+			soundSwitch.openSwitch();
 		} else {
-		    soundSwitch.closeSwitch();
+			soundSwitch.closeSwitch();
 		}
 
 		// vibrate notification is switched on or not?
 		if (settingsModel.getSettingMsgVibrate()) {
-		    vibrateSwitch.openSwitch();
+			vibrateSwitch.openSwitch();
 		} else {
-		    vibrateSwitch.closeSwitch();
+			vibrateSwitch.closeSwitch();
 		}
 
 		// the speaker is switched on or not?
 		if (settingsModel.getSettingMsgSpeaker()) {
-		    speakerSwitch.openSwitch();
+			speakerSwitch.openSwitch();
 		} else {
-		    speakerSwitch.closeSwitch();
+			speakerSwitch.closeSwitch();
 		}
 
 		// if allow owner leave
 		if(settingsModel.isChatroomOwnerLeaveAllowed()){
-		    ownerLeaveSwitch.openSwitch();
+			ownerLeaveSwitch.openSwitch();
 		}else{
-		    ownerLeaveSwitch.closeSwitch();
+			ownerLeaveSwitch.closeSwitch();
 		}
-		
+
 		// delete messages when exit group?
 		if(settingsModel.isDeleteMessagesAsExitGroup()){
-		    switch_delete_msg_when_exit_group.openSwitch();
+			switch_delete_msg_when_exit_group.openSwitch();
 		} else {
-		    switch_delete_msg_when_exit_group.closeSwitch();
+			switch_delete_msg_when_exit_group.closeSwitch();
 		}
-		
+
 		if (settingsModel.isAutoAcceptGroupInvitation()) {
-		    switch_auto_accept_group_invitation.openSwitch();
+			switch_auto_accept_group_invitation.openSwitch();
 		} else {
-		    switch_auto_accept_group_invitation.closeSwitch();
+			switch_auto_accept_group_invitation.closeSwitch();
 		}
-		
+
 		if (settingsModel.isAdaptiveVideoEncode()) {
-            switch_adaptive_video_encode.openSwitch();
+			switch_adaptive_video_encode.openSwitch();
 			EMClient.getInstance().callManager().getCallOptions().enableFixedVideoResolution(false);
-        } else {
-            switch_adaptive_video_encode.closeSwitch();
+		} else {
+			switch_adaptive_video_encode.closeSwitch();
 			EMClient.getInstance().callManager().getCallOptions().enableFixedVideoResolution(true);
-        }
+		}
 
 		if(settingsModel.isCustomServerEnable()){
 			customServerSwitch.openSwitch();
 		}else{
 			customServerSwitch.closeSwitch();
-        }
+		}
 
 		if (settingsModel.isCustomAppkeyEnabled()) {
 			customAppkeySwitch.openSwitch();
@@ -263,13 +214,82 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 				PreferenceManager.getInstance().setCustomAppkey(s.toString());
 			}
 		});
-		hideSoftKeyboard();
 	}
 
-	
+	private void setListener() {
+		blacklistContainer.setOnClickListener(this);
+		rl_switch_notification.setOnClickListener(this);
+		rl_switch_sound.setOnClickListener(this);
+		rl_switch_vibrate.setOnClickListener(this);
+		rl_switch_speaker.setOnClickListener(this);
+		customAppkeySwitch.setOnClickListener(this);
+		customServerSwitch.setOnClickListener(this);
+		rl_custom_server.setOnClickListener(this);
+		logoutBtn.setOnClickListener(this);
+		llDiagnose.setOnClickListener(this);
+		pushNick.setOnClickListener(this);
+		rl_switch_chatroom_leave.setOnClickListener(this);
+		rl_switch_delete_msg_when_exit_group.setOnClickListener(this);
+		rl_switch_auto_accept_group_invitation.setOnClickListener(this);
+		rl_switch_adaptive_video_encode.setOnClickListener(this);
+		rl_push_settings.setOnClickListener(this);
+		ll_call_option.setOnClickListener(this);
+		rl_mail_log.setOnClickListener(this);
+	}
+
+	private void initView() {
+		rl_switch_notification = (RelativeLayout) findViewById(R.id.rl_switch_notification);
+		rl_switch_sound = (RelativeLayout) findViewById(R.id.rl_switch_sound);
+		rl_switch_vibrate = (RelativeLayout) findViewById(R.id.rl_switch_vibrate);
+		rl_switch_speaker = (RelativeLayout) findViewById(R.id.rl_switch_speaker);
+		rl_switch_chatroom_leave = (RelativeLayout) findViewById(R.id.rl_switch_chatroom_owner_leave);
+		rl_switch_delete_msg_when_exit_group = (RelativeLayout) findViewById(R.id.rl_switch_delete_msg_when_exit_group);
+		rl_switch_auto_accept_group_invitation = (RelativeLayout) findViewById(R.id.rl_switch_auto_accept_group_invitation);
+		rl_switch_adaptive_video_encode = (RelativeLayout) findViewById(R.id.rl_switch_adaptive_video_encode);
+		rl_custom_appkey = (RelativeLayout) findViewById(R.id.rl_custom_appkey);
+		rl_custom_server = (RelativeLayout) findViewById(R.id.rl_custom_server);
+		rl_push_settings = (RelativeLayout) findViewById(R.id.rl_push_settings);
+
+		ll_call_option = (LinearLayout) findViewById(R.id.ll_call_option);
+
+		rl_mail_log = (RelativeLayout) findViewById(R.id.rl_mail_log);
+
+		notifySwitch = (EaseSwitchButton) findViewById(R.id.switch_notification);
+		soundSwitch = (EaseSwitchButton) findViewById(R.id.switch_sound);
+		vibrateSwitch = (EaseSwitchButton) findViewById(R.id.switch_vibrate);
+		speakerSwitch = (EaseSwitchButton) findViewById(R.id.switch_speaker);
+		ownerLeaveSwitch = (EaseSwitchButton) findViewById(R.id.switch_owner_leave);
+		switch_delete_msg_when_exit_group = (EaseSwitchButton) findViewById(R.id.switch_delete_msg_when_exit_group);
+		switch_auto_accept_group_invitation = (EaseSwitchButton) findViewById(R.id.switch_auto_accept_group_invitation);
+		switch_adaptive_video_encode = (EaseSwitchButton) findViewById(R.id.switch_adaptive_video_encode);
+		logoutBtn = (Button) findViewById(R.id.btn_logout);
+		if(!TextUtils.isEmpty(EMClient.getInstance().getCurrentUser())){
+			logoutBtn.setText(getString(R.string.button_logout) + "(" + EMClient.getInstance().getCurrentUser() + ")");
+		}
+		customServerSwitch = (EaseSwitchButton) findViewById(R.id.switch_custom_server);
+		customAppkeySwitch = (EaseSwitchButton) findViewById(R.id.switch_custom_appkey);
+
+		textview1 = (TextView) findViewById(R.id.textview1);
+		textview2 = (TextView) findViewById(R.id.textview2);
+
+		blacklistContainer = (LinearLayout) findViewById(R.id.ll_black_list);
+		llDiagnose=(LinearLayout) findViewById(R.id.ll_diagnose);
+		pushNick=(LinearLayout) findViewById(R.id.ll_set_push_nick);
+		edit_custom_appkey = (EditText) findViewById(R.id.edit_custom_appkey);
+		EaseTitleBar titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
+		if (titleBar != null) {
+			titleBar.setLeftImageResource(R.drawable.em_mm_title_back);
+			titleBar.setLeftLayoutClickListener(this);
+		}
+	}
+
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+			case R.id.title_bar:
+				MFGT.finish(SettingsActivity.this);
+				break;
 			//end of red packet code
 			case R.id.rl_switch_notification:
 				if (notifySwitch.isSwitchOpen()) {
