@@ -121,8 +121,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.em_fragment_conversation_settings);
-		if(savedInstanceState != null && savedInstanceState.getBoolean("isConflict", false))
-            return;
+
 		rl_switch_notification = (RelativeLayout) findViewById(R.id.rl_switch_notification);
 		rl_switch_sound = (RelativeLayout) findViewById(R.id.rl_switch_sound);
 		rl_switch_vibrate = (RelativeLayout) findViewById(R.id.rl_switch_vibrate);
@@ -264,6 +263,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 				PreferenceManager.getInstance().setCustomAppkey(s.toString());
 			}
 		});
+		hideSoftKeyboard();
 	}
 
 	

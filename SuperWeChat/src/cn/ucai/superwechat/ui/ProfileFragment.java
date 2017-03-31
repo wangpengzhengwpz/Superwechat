@@ -44,6 +44,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null && savedInstanceState.getBoolean("isConflict", false))
+            return;
         initData();
     }
 
@@ -75,7 +77,7 @@ public class ProfileFragment extends Fragment {
     }
 
     @OnClick(R.id.layout_profile_view)
-    public void goroUserInfo() {
+    public void gotoUserInfo() {
         MFGT.gotoUserInfo(getActivity(), true, EMClient.getInstance().getCurrentUser());
     }
 }
