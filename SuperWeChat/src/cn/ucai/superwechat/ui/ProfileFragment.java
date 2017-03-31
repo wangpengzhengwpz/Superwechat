@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.easemob.redpacketui.utils.RedPacketUtil;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 
@@ -66,5 +67,10 @@ public class ProfileFragment extends Fragment {
         }else if(((MainActivity)getActivity()).getCurrentAccountRemoved()){
             outState.putBoolean(Constant.ACCOUNT_REMOVED, true);
         }
+    }
+
+    @OnClick(R.id.tv_profile_money)
+    public void money() {
+        RedPacketUtil.startChangeActivity(getContext());
     }
 }
