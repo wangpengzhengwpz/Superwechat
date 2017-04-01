@@ -137,7 +137,7 @@ public class UserProfileManager {
 	}
 
 	public synchronized User getCurrentAppUserInfo() {
-		if (currentAppUser == null) {
+		if (currentAppUser == null || currentAppUser.getMUserName() == null) {
 			String username = EMClient.getInstance().getCurrentUser();
 			currentAppUser = new User(username);
 			String nick = getCurrentUserNick();
