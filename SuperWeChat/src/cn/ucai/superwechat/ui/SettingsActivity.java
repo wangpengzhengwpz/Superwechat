@@ -276,10 +276,19 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 		llDiagnose=(LinearLayout) findViewById(R.id.ll_diagnose);
 		pushNick=(LinearLayout) findViewById(R.id.ll_set_push_nick);
 		edit_custom_appkey = (EditText) findViewById(R.id.edit_custom_appkey);
+		setTitleBar();
+	}
+
+	private void setTitleBar() {
 		EaseTitleBar titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
 		if (titleBar != null) {
 			titleBar.setLeftImageResource(R.drawable.em_mm_title_back);
-			titleBar.setLeftLayoutClickListener(this);
+			titleBar.setLeftLayoutClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					MFGT.finish(SettingsActivity.this);
+				}
+			});
 		}
 	}
 
@@ -287,10 +296,6 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.title_bar:
-				MFGT.finish(SettingsActivity.this);
-				break;
-			//end of red packet code
 			case R.id.rl_switch_notification:
 				if (notifySwitch.isSwitchOpen()) {
 					notifySwitch.closeSwitch();
@@ -442,6 +447,7 @@ public class SettingsActivity extends BaseActivity implements OnClickListener {
 				runOnUiThread(new Runnable() {
 					public void run() {
 						pd.dismiss();
+						finish();
 						// show login screen
 						MFGT.gotoLogin(SettingsActivity.this);
 					}

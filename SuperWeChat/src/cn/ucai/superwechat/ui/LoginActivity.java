@@ -108,7 +108,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE || ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))) {
-                    login(null);
+                    login();
                     return true;
                 } else {
                     return false;
@@ -120,9 +120,8 @@ public class LoginActivity extends BaseActivity {
     /**
      * login
      *
-     * @param view
      */
-    public void login(View view) {
+    public void login() {
         if (!EaseCommonUtils.isNetWorkConnected(this)) {
             Toast.makeText(this, R.string.network_isnot_available, Toast.LENGTH_SHORT).show();
             return;
@@ -220,9 +219,8 @@ public class LoginActivity extends BaseActivity {
     /**
      * register
      *
-     * @param view
      */
-    public void register(View view) {
+    public void register() {
         startActivityForResult(new Intent(this, RegisterActivity.class), 0);
     }
 
@@ -238,8 +236,13 @@ public class LoginActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
+                login();
                 break;
             case R.id.btn_register:
+                register();
+                break;
+            case R.id.img_back:
+                finish();
                 break;
         }
     }
