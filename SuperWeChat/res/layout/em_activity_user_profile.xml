@@ -7,9 +7,9 @@
     android:orientation="vertical" >
     
 	<com.hyphenate.easeui.widget.EaseTitleBar
-        android:id="@+id/title__bar"
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_parent"
+        android:layout_height="wrap_content"
         app:titleBarTitle="@string/title_user_profile"/>
 
     <ScrollView
