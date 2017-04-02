@@ -165,7 +165,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     @OnClick(R.id.layout_userinfo_avatar)
-    private void uploadHeadPhoto() {
+    public void uploadHeadPhoto() {
         Builder builder = new Builder(this);
         builder.setTitle(R.string.dl_title_upload_photo);
         builder.setItems(new String[]{getString(R.string.dl_msg_take_photo),

@@ -140,6 +140,7 @@ public class UserProfileManager {
 	}
 
 	public synchronized User getCurrentAppUserInfo() {
+		L.e(TAG, "getCurrentAppUserInfo,currentAppUser=" + currentAppUser);
 		if (currentAppUser == null || currentAppUser.getMUserName() == null) {
 			String username = EMClient.getInstance().getCurrentUser();
 			currentAppUser = new User(username);
@@ -223,8 +224,9 @@ public class UserProfileManager {
 					Result result = ResultUtils.getResultFromJson(s, User.class);
 					if (result != null && result.isRetMsg()) {
 						User user = (User) result.getRetData();
-						L.e(TAG, "asyncGetCurrentAppUserInfo,user=" + user);
+//						L.e(TAG, "asyncGetCurrentAppUserInfo,user=" + user);
 						if (user != null) {
+							currentAppUser = user;
 							setCurrentAppUserNick(user.getMUserNick());
 							setCurrentAppUserAvatar(user.getAvatar());
 							SuperWeChatHelper.getInstance().saveAppContact(user);
@@ -258,9 +260,11 @@ public class UserProfileManager {
 		});
 
 	}
+
 	public void asyncGetUserInfo(final String username,final EMValueCallBack<EaseUser> callback){
 		ParseManager.getInstance().asyncGetUserInfo(username, callback);
 	}
+
 	private void setCurrentUserNick(String nickname) {
 		getCurrentUserInfo().setNick(nickname);
 		PreferenceManager.getInstance().setCurrentUserNick(nickname);
@@ -277,6 +281,7 @@ public class UserProfileManager {
 	}
 
 	private void setCurrentAppUserAvatar(String avatar) {
+		L.e(TAG, "setCurrentAppUserAvatar,avatar=" + avatar);
 		getCurrentAppUserInfo().setAvatar(avatar);
 		PreferenceManager.getInstance().setCurrentUserAvatar(avatar);
 	}

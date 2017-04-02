@@ -122,6 +122,7 @@ public class User implements Serializable {
 				", mavatarType=" + mavatarType +
 				", mavatarLastUpdateTime='" + mavatarLastUpdateTime + '\'' +
 				", initialLetter='" + initialLetter + '\'' +
+				", avatar='" + avatar + '\'' +
 				'}';
 	}
 
@@ -137,7 +138,11 @@ public class User implements Serializable {
 	}
 
 	public String getAvatar() {
-		String path = "http://101.251.196.90:8080/SuperWeChatServerV2.0/downloadAvatar?name_or_hxid="+getMUserName()+"&avatarType=user_avatar&m_avatar_suffix="+getMAvatarSuffix()+"&updatetime="+getMAvatarLastUpdateTime();
-		return path;
+		if (avatar != null) {
+			return avatar;
+		} else {
+			String path = "http://101.251.196.90:8080/SuperWeChatServerV2.0/downloadAvatar?name_or_hxid="+getMUserName()+"&avatarType=user_avatar&m_avatar_suffix="+getMAvatarSuffix()+"&updatetime="+getMAvatarLastUpdateTime();
+			return path;
+		}
 	}
 }
