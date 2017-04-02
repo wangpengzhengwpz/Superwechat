@@ -335,6 +335,7 @@
     <string name="dl_ok">确定</string>
     <string name="dl_cancel">取消</string>
     <string name="toast_nick_not_isnull">昵称不能为空！</string>
+    <string name="toast_nick_not_modif">昵称未修改！</string>
     <string name="dl_update_nick">更新昵称</string>
     <string name="dl_update_photo">更新头像</string>
     <string name="dl_waiting">请等待……</string>

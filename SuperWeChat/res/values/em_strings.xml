@@ -335,6 +335,7 @@
     <string name="dl_ok">OK</string>
     <string name="dl_cancel">Cancel</string>
     <string name="toast_nick_not_isnull">nickname cannot be empty!</string>
+    <string name="toast_nick_not_modif">nickname cannot be modif！</string>
     <string name="dl_update_nick">update nickname</string>
     <string name="dl_update_photo">update photo</string>
     <string name="dl_waiting">waiting…</string>

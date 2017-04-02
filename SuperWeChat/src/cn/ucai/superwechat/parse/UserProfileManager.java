@@ -1,6 +1,7 @@
 package cn.ucai.superwechat.parse;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
@@ -10,6 +11,7 @@ import com.hyphenate.easeui.domain.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.db.IUserModel;
 import cn.ucai.superwechat.db.OnCompleteListener;
@@ -148,11 +150,33 @@ public class UserProfileManager {
 	}
 
 	public boolean updateCurrentUserNickName(final String nickname) {
-		boolean isSuccess = ParseManager.getInstance().updateParseNickName(nickname);
-		if (isSuccess) {
-			setCurrentUserNick(nickname);
-		}
-		return isSuccess;
+		userModel.updateUserNick(appContext, EMClient.getInstance().getCurrentUser(), nickname,
+				new OnCompleteListener<String>() {
+			@Override
+			public void onSuccess(String s) {
+				boolean updatenick = false;
+				if (s != null) {
+					Result result = ResultUtils.getResultFromJson(s, User.class);
+					if (result != null && result.isRetMsg()) {
+						User user = (User) result.getRetData();
+						if (user != null) {
+							updatenick = true;
+							setCurrentAppUserNick(user.getMUserNick());
+							SuperWeChatHelper.getInstance().saveAppContact(user);
+						}
+					}
+				}
+				appContext.sendBroadcast(new Intent(I.REQUEST_UPDATE_USER_NICK)
+						.putExtra(I.User.NICK, updatenick));
+			}
+
+			@Override
+			public void onError(String error) {
+				appContext.sendBroadcast(new Intent(I.REQUEST_UPDATE_USER_NICK)
+						.putExtra(I.User.NICK, false));
+			}
+		});
+		return false;
 	}
 
 	public String uploadUserAvatar(byte[] data) {
