@@ -78,6 +78,6 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.layout_profile_view)
     public void gotoUserInfo() {
-        MFGT.gotoUserInfo(getActivity(), true, EMClient.getInstance().getCurrentUser());
+        MFGT.gotoUserInfo(getActivity());
     }
 }
