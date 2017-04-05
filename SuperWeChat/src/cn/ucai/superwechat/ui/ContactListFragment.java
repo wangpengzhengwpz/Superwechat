@@ -41,6 +41,8 @@ import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.SuperWeChatHelper.DataSyncListener;
 import cn.ucai.superwechat.db.InviteMessgeDao;
 import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.dialog.TitleMenu.ActionItem;
+import cn.ucai.superwechat.dialog.TitleMenu.TitlePopup;
 import cn.ucai.superwechat.widget.ContactItemView;
 
 /**
@@ -61,7 +63,8 @@ public class ContactListFragment extends EaseContactListFragment {
     @Override
     protected void initView() {
         super.initView();
-        @SuppressLint("InflateParams") View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.em_contacts_header, null);
+        @SuppressLint("InflateParams") View headerView = LayoutInflater.from(getActivity())
+                .inflate(R.layout.em_contacts_header, null);
         HeaderItemClickListener clickListener = new HeaderItemClickListener();
         applicationItem = (ContactItemView) headerView.findViewById(R.id.application_item);
         applicationItem.setOnClickListener(clickListener);
@@ -70,7 +73,8 @@ public class ContactListFragment extends EaseContactListFragment {
 //        headerView.findViewById(R.id.robot_item).setOnClickListener(clickListener);
         listView.addHeaderView(headerView);
         //add loading view
-        loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
+        loadingView = LayoutInflater.from(getActivity()).inflate
+                (R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
 
         registerForContextMenu(listView);
@@ -99,13 +103,23 @@ public class ContactListFragment extends EaseContactListFragment {
     @SuppressWarnings("unchecked")
     @Override
     protected void setUpView() {
+        final TitlePopup titlePopup = new TitlePopup(getContext());
+        titlePopup.addAction(new ActionItem(getContext(), R.string.menu_groupchat,
+                R.drawable.icon_menu_group));
+        titlePopup.addAction(new ActionItem(getContext(), R.string.menu_addfriend,
+                R.drawable.icon_menu_addfriend));
+        titlePopup.addAction(new ActionItem(getContext(), R.string.menu_qrcode,
+                R.drawable.icon_menu_sao));
+        titlePopup.addAction(new ActionItem(getContext(), R.string.menu_money,
+                R.drawable.icon_menu_money));
         titleBar.setRightImageResource(R.drawable.em_add);
         titleBar.setRightLayoutClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View v) {
 //                startActivity(new Intent(getActivity(), AddContactActivity.class));
-                NetUtils.hasDataConnection(getActivity());
+//                NetUtils.hasDataConnection(getActivity());
+                titlePopup.show(titleBar);
             }
         });
         //设置联系人数据
@@ -123,20 +137,21 @@ public class ContactListFragment extends EaseContactListFragment {
                 if (user != null) {
                     String username = user.getUsername();
                     // demo中直接进入聊天页面，实际一般是进入用户详情页
-                    startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("userId", username));
+                    startActivity(new Intent(getActivity(), ChatActivity.class).putExtra
+                            ("userId", username));
                 }
             }
         });
 
         
-        // 进入添加好友页
-        titleBar.getRightLayout().setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), AddContactActivity.class));
-            }
-        });
+//        // 进入添加好友页
+//        titleBar.getRightLayout().setOnClickListener(new OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getActivity(), AddContactActivity.class));
+//            }
+//        });
         
         
         contactSyncListener = new ContactSyncListener();
@@ -146,7 +161,8 @@ public class ContactListFragment extends EaseContactListFragment {
         SuperWeChatHelper.getInstance().addSyncBlackListListener(blackListSyncListener);
         
         contactInfoSyncListener = new ContactInfoSyncListener();
-        SuperWeChatHelper.getInstance().getUserProfileManager().addSyncContactInfoListener(contactInfoSyncListener);
+        SuperWeChatHelper.getInstance().getUserProfileManager().addSyncContactInfoListener
+                (contactInfoSyncListener);
         
         if (SuperWeChatHelper.getInstance().isContactsSyncedWithServer()) {
             loadingView.setVisibility(View.GONE);
@@ -168,7 +184,8 @@ public class ContactListFragment extends EaseContactListFragment {
         }
         
         if(contactInfoSyncListener != null){
-            SuperWeChatHelper.getInstance().getUserProfileManager().removeSyncContactInfoListener(contactInfoSyncListener);
+            SuperWeChatHelper.getInstance().getUserProfileManager().removeSyncContactInfoListener
+                    (contactInfoSyncListener);
         }
     }
     
@@ -198,7 +215,8 @@ public class ContactListFragment extends EaseContactListFragment {
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-	    toBeProcessUser = (EaseUser) listView.getItemAtPosition(((AdapterContextMenuInfo) menuInfo).position);
+	    toBeProcessUser = (EaseUser) listView.getItemAtPosition((
+                (AdapterContextMenuInfo) menuInfo).position);
 	    toBeProcessUsername = toBeProcessUser.getUsername();
 		getActivity().getMenuInflater().inflate(R.menu.em_context_contact_list, menu);
 	}
@@ -239,11 +257,13 @@ public class ContactListFragment extends EaseContactListFragment {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					EMClient.getInstance().contactManager().deleteContact(tobeDeleteUser.getUsername());
+					EMClient.getInstance().contactManager().deleteContact
+                            (tobeDeleteUser.getUsername());
 					// remove user from memory and database
 					UserDao dao = new UserDao(getActivity());
 					dao.deleteContact(tobeDeleteUser.getUsername());
-					SuperWeChatHelper.getInstance().getContactList().remove(tobeDeleteUser.getUsername());
+					SuperWeChatHelper.getInstance().getContactList().remove
+                            (tobeDeleteUser.getUsername());
 					getActivity().runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
@@ -256,7 +276,8 @@ public class ContactListFragment extends EaseContactListFragment {
 					getActivity().runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
-							Toast.makeText(getActivity(), st2 + e.getMessage(), Toast.LENGTH_LONG).show();
+							Toast.makeText(getActivity(), st2 + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
 						}
 					});
 
@@ -281,7 +302,8 @@ public class ContactListFragment extends EaseContactListFragment {
                                 loadingView.setVisibility(View.GONE);
                                 refresh();
                             }else{
-                                String s1 = getResources().getString(R.string.get_failed_please_check);
+                                String s1 = getResources().getString
+                                        (R.string.get_failed_please_check);
                                 Toast.makeText(getActivity(), s1, Toast.LENGTH_LONG).show();
                                 loadingView.setVisibility(View.GONE);
                             }
