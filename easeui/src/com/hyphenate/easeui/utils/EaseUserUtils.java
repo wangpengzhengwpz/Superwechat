@@ -78,6 +78,14 @@ public class EaseUserUtils {
      */
     public static void setAppUserAvatar(Context context, String username, ImageView imageView) {
         User user = getAppUserInfo(username);
+        setAppUserAvatar(context, user, imageView);
+    }
+
+    /**
+     * set user avatar
+     * @param user
+     */
+    public static void setAppUserAvatar(Context context, User user, ImageView imageView) {
         if (user != null) {
             setAvatar(context, user.getAvatar(), imageView);
         } else {
@@ -106,10 +114,19 @@ public class EaseUserUtils {
     public static void setAppUserNick(String username, TextView textView) {
         if (textView != null) {
             User user = getAppUserInfo(username);
-            if (user != null && user.getMUserNick() != null) {
+            setAppUserNick(user, textView);
+        }
+    }
+
+    /**
+     * set user's nickname
+     */
+    public static void setAppUserNick(User user, TextView textView) {
+        if (textView != null && user != null) {
+            if (user.getMUserNick() != null) {
                 textView.setText(user.getMUserNick());
             } else {
-                textView.setText(username);
+                textView.setText(user.getMUserName());
             }
         }
     }

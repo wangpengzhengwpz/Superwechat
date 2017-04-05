@@ -13,6 +13,7 @@
  */
 package cn.ucai.superwechat.ui;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -42,9 +43,10 @@ public class AddContactActivity extends BaseActivity {
     EditText editNote;
     @BindView(R.id.ll_user)
     RelativeLayout llUser;
-    private EditText editText;
     private String toAddUsername;
+    private ProgressDialog progressDialog;
     IUserModel model;
+    User user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +73,20 @@ public class AddContactActivity extends BaseActivity {
      * @param v
      */
     public void searchContact(View v) {
-        final String name = editText.getText().toString();
+        final String name = editNote.getText().toString().trim();
         toAddUsername = name;
         if (TextUtils.isEmpty(name)) {
             new EaseAlertDialog(this, R.string.Please_enter_a_username).show();
             return;
         }
+        showDiglog();
         searchUser();
+    }
+
+    private void showDiglog() {
+        progressDialog = new ProgressDialog(AddContactActivity.this);
+        progressDialog.setMessage(getString(R.string.addcontact_search));
+        progressDialog.show();
     }
 
     private void searchUser() {
@@ -90,6 +99,7 @@ public class AddContactActivity extends BaseActivity {
                         if (s != null) {
                             Result result = ResultUtils.getResultFromJson(s, User.class);
                             if (result != null && result.isRetMsg()) {
+                                user = (User) result.getRetData();
                                 success = true;
                                 //跳转到用户详情
                             }
@@ -106,9 +116,11 @@ public class AddContactActivity extends BaseActivity {
     }
 
     private void showResult(boolean success) {
+        progressDialog.dismiss();
         llUser.setVisibility(success ? View.GONE : View.VISIBLE);
         if (success) {
             //跳转到用户详情
+            MFGT.gotoFriend(AddContactActivity.this,user);
         }
     }
 
@@ -123,9 +135,11 @@ public class AddContactActivity extends BaseActivity {
 //            return;
 //        }
 //
-//        if (SuperWeChatHelper.getInstance().getContactList().containsKey(nameText.getText().toString())) {
+//        if (SuperWeChatHelper.getInstance().getContactList().containsKey(nameText.getText()
+//              .toString())) {
 //            //let the user know the contact already in your contact list
-//            if (EMClient.getInstance().contactManager().getBlackListUsernames().contains(nameText.getText().toString())) {
+//            if (EMClient.getInstance().contactManager().getBlackListUsernames()
+//              .contains(nameText.getText().toString())) {
 //                new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
 //                return;
 //            }
@@ -157,8 +171,10 @@ public class AddContactActivity extends BaseActivity {
 //                    runOnUiThread(new Runnable() {
 //                        public void run() {
 //                            progressDialog.dismiss();
-//                            String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-//                            Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_LONG).show();
+//                            String s2 = getResources().getString
+//                                  (R.string.Request_add_buddy_failure);
+//                            Toast.makeText(getApplicationContext(), s2 + e.getMessage(),
+//                                  Toast.LENGTH_LONG).show();
 //                        }
 //                    });
 //                }

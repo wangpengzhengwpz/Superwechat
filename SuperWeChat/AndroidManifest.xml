@@ -80,6 +80,11 @@
             android:name="cn.ucai.superwechat.ui.SettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" />
+        <!-- 用户详情 -->
+        <activity
+            android:name="cn.ucai.superwechat.ui.FriendProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide" />
         <!-- 登陆 -->
         <activity
             android:name="cn.ucai.superwechat.ui.LoginActivity"
