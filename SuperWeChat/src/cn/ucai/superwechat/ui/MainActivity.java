@@ -33,7 +33,6 @@ import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.easemob.redpacketsdk.constant.RPConstant;
@@ -47,7 +46,9 @@ import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMConversation.EMConversationType;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
+import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.util.EMLog;
+import com.hyphenate.util.NetUtils;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
@@ -55,27 +56,33 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.adapter.MainTabAdpter;
 import cn.ucai.superwechat.db.InviteMessgeDao;
 import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.dialog.TitleMenu.ActionItem;
+import cn.ucai.superwechat.dialog.TitleMenu.TitlePopup;
 import cn.ucai.superwechat.runtimepermissions.PermissionsManager;
 import cn.ucai.superwechat.runtimepermissions.PermissionsResultAction;
+import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.widget.DMTabHost;
 import cn.ucai.superwechat.widget.MFViewPager;
 
+import static com.baidu.mapapi.BMapManager.getContext;
+
 @SuppressLint("NewApi")
 public class MainActivity extends BaseActivity implements
-        ViewPager.OnPageChangeListener,DMTabHost.OnCheckedChangeListener {
+        ViewPager.OnPageChangeListener, DMTabHost.OnCheckedChangeListener {
     protected static final String TAG = "MainActivity";
-    @BindView(R.id.txt_left)
-    TextView txtLeft;
     @BindView(R.id.layout_viewpage)
     MFViewPager layoutViewpage;
     @BindView(R.id.layout_tabhost)
     DMTabHost layoutTabhost;
+    @BindView(R.id.title_bar)
+    EaseTitleBar titleBar;
     // textview for unread message count
 //    private TextView unreadLabel;
     // textview for unread event message
@@ -91,6 +98,7 @@ public class MainActivity extends BaseActivity implements
     // user account was removed
     private boolean isCurrentAccountRemoved = false;
     MainTabAdpter adapter;
+    TitlePopup titlePopup;
 
     /**
      * check if current user account was remove
@@ -203,7 +211,41 @@ public class MainActivity extends BaseActivity implements
 //        mTabs[2] = (Button) findViewById(R.id.btn_setting);
 //        // select first tab
 //        mTabs[0].setSelected(true);
-        txtLeft.setVisibility(View.VISIBLE);
+//        txtLeft.setVisibility(View.VISIBLE);
+        titleBar.setRightLayoutClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+//                startActivity(new Intent(getActivity(), AddContactActivity.class));
+                if (NetUtils.hasDataConnection(MainActivity.this)) {
+                    showPup();
+                }
+            }
+        });
+        titlePopup = new TitlePopup(MainActivity.this);
+        titlePopup.addAction(new ActionItem(MainActivity.this, R.string.menu_groupchat,
+                R.drawable.icon_menu_group));
+        titlePopup.addAction(new ActionItem(MainActivity.this, R.string.menu_addfriend,
+                R.drawable.icon_menu_addfriend));
+        titlePopup.addAction(new ActionItem(MainActivity.this, R.string.menu_qrcode,
+                R.drawable.icon_menu_sao));
+        titlePopup.addAction(new ActionItem(MainActivity.this, R.string.menu_money,
+                R.drawable.icon_menu_money));
+        titlePopup.setItemOnClickListener(onItemOnClickListener);
+    }
+
+    TitlePopup.OnItemOnClickListener onItemOnClickListener = new TitlePopup.OnItemOnClickListener() {
+        @Override
+        public void onItemClick(ActionItem item, int position) {
+            if (position == 1) {
+                // 进入添加好友页
+                MFGT.gotoAddContact(MainActivity.this);
+            }
+        }
+    };
+
+    private void showPup() {
+        titlePopup.show(titleBar);
     }
 
     /**
