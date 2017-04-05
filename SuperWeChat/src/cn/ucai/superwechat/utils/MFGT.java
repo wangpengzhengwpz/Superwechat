@@ -79,6 +79,6 @@ public class MFGT {
 
     public static void gotoSendAppFriend(Activity activity, String userName) {
         startActivity(activity, new Intent(activity, SendAddFriendActivity.class)
-                .putExtra(I.User.TABLE_NAME, userName));
+                .putExtra(I.User.USER_NAME, userName));
     }
 }
