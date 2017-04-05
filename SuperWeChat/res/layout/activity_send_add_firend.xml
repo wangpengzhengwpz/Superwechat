@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.hyphenate.easeui.widget.EaseTitleBar
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBarLeftImage="@drawable/em_mm_title_back"
+        app:titleBarTitle="@string/addcontact_send_title">
+
+        <Button
+            android:id="@+id/btn_send"
+            style="@style/btn_titleStyle"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
+            android:layout_margin="7dp"
+            android:text="@string/addcontact_send_msg"
+            android:textColor="#fff"
+            android:textSize="13sp"
+            android:onClick="searchContact"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+    </com.hyphenate.easeui.widget.EaseTitleBar>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:text="@string/addcontact_send_msg_title"/>
+    <EditText
+        android:background="@drawable/edittext_login"
+        android:id="@+id/et_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:paddingLeft="15dp"
+        android:textColor="@color/black"
+        android:singleLine="true"
+        android:textSize="18sp" />
+
+</LinearLayout>
