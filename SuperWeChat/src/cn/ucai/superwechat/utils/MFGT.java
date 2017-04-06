@@ -1,12 +1,14 @@
 package cn.ucai.superwechat.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
 import com.hyphenate.easeui.domain.User;
 
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.domain.InviteMessage;
 import cn.ucai.superwechat.ui.AddContactActivity;
 import cn.ucai.superwechat.ui.FriendProfileActivity;
 import cn.ucai.superwechat.ui.GuideActivity;
@@ -76,6 +78,11 @@ public class MFGT {
     public static void gotoFriend(Activity activity, User user) {
         startActivity(activity, new Intent(activity, FriendProfileActivity.class)
                 .putExtra(I.User.TABLE_NAME, user));
+    }
+
+    public static void gotoFriend(Context activity, InviteMessage msg) {
+        startActivity((Activity) activity, new Intent(activity, FriendProfileActivity.class)
+                .putExtra(I.User.NICK, msg));
     }
 
     public static void gotoSendAppFriend(Activity activity, String userName) {

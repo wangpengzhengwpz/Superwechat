@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatHelper;
+import cn.ucai.superwechat.domain.InviteMessage;
 import cn.ucai.superwechat.utils.MFGT;
 
 /**
@@ -61,7 +62,15 @@ public class FriendProfileActivity extends BaseActivity {
         if (user != null) {
             showUserInfo();
         } else {
-            MFGT.finish(FriendProfileActivity.this);
+            InviteMessage msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
+            if (msg != null) {
+                user = new User(msg.getFrom());
+                user.setMUserNick(msg.getNickname());
+                user.setAvatar(msg.getAvatar());
+                showUserInfo();
+            } else {
+                MFGT.finish(FriendProfileActivity.this);
+            }
         }
     }
 
@@ -75,6 +84,7 @@ public class FriendProfileActivity extends BaseActivity {
         EaseUserUtils.setAppUserAvatar(FriendProfileActivity.this, user, profileImage);
         EaseUserUtils.setAppUserNick(user, tvUserinfoNick);
         showFriend(isFriend);
+        syncUserInfo();
     }
 
     private void showFriend(boolean isFriend) {
@@ -92,5 +102,9 @@ public class FriendProfileActivity extends BaseActivity {
         } else {
             //直接添加为好友
         }
+    }
+
+    private void syncUserInfo() {
+        //从服务器异步加载用户的最新信息，填充到好友列表或者新的朋友列表
     }
 }

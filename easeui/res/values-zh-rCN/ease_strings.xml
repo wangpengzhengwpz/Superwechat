@@ -120,6 +120,7 @@
     <string name="unable_to_connect">不能连接到服务器</string>
     <string name="newchat">新建聊天</string>
     <string name="agree">同意</string>
+    <string name="addcontact_be_friented">已添加</string>
     <string name="Group_chat">群聊:</string>
     <string name="not_download">未下载:</string>
 	<string name="Please_enter_a_username">请输入用户名</string>
