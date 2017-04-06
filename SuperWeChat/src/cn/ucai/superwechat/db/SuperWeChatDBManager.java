@@ -27,7 +27,8 @@ public class SuperWeChatDBManager {
     private DbOpenHelper dbHelper;
     
     private SuperWeChatDBManager(){
-        dbHelper = DbOpenHelper.getInstance(SuperWeChatApplication.getInstance().getApplicationContext());
+        dbHelper = DbOpenHelper.getInstance(SuperWeChatApplication.getInstance()
+                .getApplicationContext());
     }
     
     public static synchronized SuperWeChatDBManager getInstance(){
@@ -67,7 +68,8 @@ public class SuperWeChatDBManager {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Map<String, EaseUser> users = new Hashtable<String, EaseUser>();
         if (db.isOpen()) {
-            Cursor cursor = db.rawQuery("select * from " + UserDao.TABLE_NAME /* + " desc" */, null);
+            Cursor cursor = db.rawQuery("select * from " + UserDao.TABLE_NAME /* + " desc" */,
+                    null);
             while (cursor.moveToNext()) {
                 String username = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_ID));
                 String nick = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_NICK));
@@ -75,8 +77,9 @@ public class SuperWeChatDBManager {
                 EaseUser user = new EaseUser(username);
                 user.setNick(nick);
                 user.setAvatar(avatar);
-                if (username.equals(Constant.NEW_FRIENDS_USERNAME) || username.equals(Constant.GROUP_USERNAME)
-                        || username.equals(Constant.CHAT_ROOM)|| username.equals(Constant.CHAT_ROBOT)) {
+                if (username.equals(Constant.NEW_FRIENDS_USERNAME) || username.equals
+                        (Constant.GROUP_USERNAME) || username.equals(Constant.CHAT_ROOM)||
+                        username.equals(Constant.CHAT_ROBOT)) {
                         user.setInitialLetter("");
                 } else {
                     EaseCommonUtils.setUserInitialLetter(user);
@@ -189,11 +192,14 @@ public class SuperWeChatDBManager {
             values.put(InviteMessgeDao.COLUMN_NAME_GROUP_Name, message.getGroupName());
             values.put(InviteMessgeDao.COLUMN_NAME_REASON, message.getReason());
             values.put(InviteMessgeDao.COLUMN_NAME_TIME, message.getTime());
+            values.put(InviteMessgeDao.COLUMN_NAME_AVATAR, message.getAvatar());
+            values.put(InviteMessgeDao.COLUMN_NAME_NICK, message.getNickname());
             values.put(InviteMessgeDao.COLUMN_NAME_STATUS, message.getStatus().ordinal());
             values.put(InviteMessgeDao.COLUMN_NAME_GROUPINVITER, message.getGroupInviter());
             db.insert(InviteMessgeDao.TABLE_NAME, null, values);
             
-            Cursor cursor = db.rawQuery("select last_insert_rowid() from " + InviteMessgeDao.TABLE_NAME,null); 
+            Cursor cursor = db.rawQuery("select last_insert_rowid() from " + InviteMessgeDao.
+                    TABLE_NAME,null);
             if(cursor.moveToFirst()){
                 id = cursor.getInt(0);
             }
@@ -211,7 +217,8 @@ public class SuperWeChatDBManager {
     synchronized public void updateMessage(int msgId,ContentValues values){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if(db.isOpen()){
-            db.update(InviteMessgeDao.TABLE_NAME, values, InviteMessgeDao.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(msgId)});
+            db.update(InviteMessgeDao.TABLE_NAME, values, InviteMessgeDao.COLUMN_NAME_ID + " = ?",
+                    new String[]{String.valueOf(msgId)});
         }
     }
     
@@ -223,17 +230,28 @@ public class SuperWeChatDBManager {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<InviteMessage> msgs = new ArrayList<InviteMessage>();
         if(db.isOpen()){
-            Cursor cursor = db.rawQuery("select * from " + InviteMessgeDao.TABLE_NAME + " desc",null);
+            Cursor cursor = db.rawQuery("select * from " + InviteMessgeDao.TABLE_NAME + " desc",
+                    null);
             while(cursor.moveToNext()){
                 InviteMessage msg = new InviteMessage();
                 int id = cursor.getInt(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_ID));
-                String from = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_FROM));
-                String groupid = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_GROUP_ID));
-                String groupname = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_GROUP_Name));
-                String reason = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_REASON));
+                String from = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_FROM));
+                String groupid = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_GROUP_ID));
+                String groupname = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_GROUP_Name));
+                String reason = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_REASON));
+                String avatar = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_AVATAR));
+                String nick = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_NICK));
                 long time = cursor.getLong(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_TIME));
-                int status = cursor.getInt(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_STATUS));
-                String groupInviter = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_GROUPINVITER));
+                int status = cursor.getInt(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_STATUS));
+                String groupInviter = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.
+                        COLUMN_NAME_GROUPINVITER));
                 
                 msg.setId(id);
                 msg.setFrom(from);
@@ -241,6 +259,8 @@ public class SuperWeChatDBManager {
                 msg.setGroupName(groupname);
                 msg.setReason(reason);
                 msg.setTime(time);
+                msg.setAvatar(avatar);
+                msg.setNickname(nick);
                 msg.setGroupInviter(groupInviter);
                 
                 if(status == InviteMesageStatus.BEINVITEED.ordinal())
@@ -276,7 +296,8 @@ public class SuperWeChatDBManager {
     synchronized public void deleteMessage(String from){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if(db.isOpen()){
-            db.delete(InviteMessgeDao.TABLE_NAME, InviteMessgeDao.COLUMN_NAME_FROM + " = ?", new String[]{from});
+            db.delete(InviteMessgeDao.TABLE_NAME, InviteMessgeDao.COLUMN_NAME_FROM + " = ?",
+                    new String[]{from});
         }
     }
     
@@ -284,7 +305,8 @@ public class SuperWeChatDBManager {
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         if(db.isOpen()){
-            Cursor cursor = db.rawQuery("select " + InviteMessgeDao.COLUMN_NAME_UNREAD_MSG_COUNT + " from " + InviteMessgeDao.TABLE_NAME, null);
+            Cursor cursor = db.rawQuery("select " + InviteMessgeDao.COLUMN_NAME_UNREAD_MSG_COUNT
+                    + " from " + InviteMessgeDao.TABLE_NAME, null);
             if(cursor.moveToFirst()){
                 count = cursor.getInt(0);
             }
@@ -342,9 +364,12 @@ public class SuperWeChatDBManager {
 				users = new Hashtable<String, RobotUser>();
 			}
             while (cursor.moveToNext()) {
-				String username = cursor.getString(cursor.getColumnIndex(UserDao.ROBOT_COLUMN_NAME_ID));
-				String nick = cursor.getString(cursor.getColumnIndex(UserDao.ROBOT_COLUMN_NAME_NICK));
-				String avatar = cursor.getString(cursor.getColumnIndex(UserDao.ROBOT_COLUMN_NAME_AVATAR));
+				String username = cursor.getString(cursor.getColumnIndex(UserDao.
+                        ROBOT_COLUMN_NAME_ID));
+				String nick = cursor.getString(cursor.getColumnIndex(UserDao.
+                        ROBOT_COLUMN_NAME_NICK));
+				String avatar = cursor.getString(cursor.getColumnIndex(UserDao.
+                        ROBOT_COLUMN_NAME_AVATAR));
 				RobotUser user = new RobotUser(username);
 				user.setNick(nick);
 				user.setAvatar(avatar);
@@ -357,8 +382,8 @@ public class SuperWeChatDBManager {
 				if(Character.isDigit(headerName.charAt(0))){
 					user.setInitialLetter("#");
 				}else{
-					user.setInitialLetter(HanziToPinyin.getInstance().get(headerName.substring(0, 1)).get(0).target
-							.substring(0, 1).toUpperCase());
+					user.setInitialLetter(HanziToPinyin.getInstance().get(headerName.
+                            substring(0, 1)).get(0).target.substring(0, 1).toUpperCase());
 					char header = user.getInitialLetter().toLowerCase().charAt(0);
 					if (header < 'a' || header > 'z') {
 						user.setInitialLetter("#");
@@ -399,7 +424,8 @@ public class SuperWeChatDBManager {
                 if(user.getMAvatarSuffix() != null)
                     values.put(UserDao.USER_COLUMN_NAME_AVATAR_SUFFIX, user.getMAvatarSuffix());
                 if(user.getMAvatarLastUpdateTime() != null)
-                    values.put(UserDao.USER_COLUMN_NAME_AVATAR_UPDATE_TIME, user.getMAvatarLastUpdateTime());
+                    values.put(UserDao.USER_COLUMN_NAME_AVATAR_UPDATE_TIME, user.
+                            getMAvatarLastUpdateTime());
                 db.replace(UserDao.USER_TABLE_NAME, null, values);
             }
         }
@@ -414,16 +440,23 @@ public class SuperWeChatDBManager {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Map<String, User> users = new Hashtable<String, User>();
         if (db.isOpen()) {
-            Cursor cursor = db.rawQuery("select * from " + UserDao.USER_TABLE_NAME /* + " desc" */, null);
+            Cursor cursor = db.rawQuery("select * from " + UserDao.USER_TABLE_NAME /* + " desc" */,
+                    null);
             while (cursor.moveToNext()) {
                 String username = cursor.getString(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME));
                 User user = new User(username);
-                user.setMUserNick(cursor.getString(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME_NICK)));
-                user.setMAvatarId(cursor.getInt(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME_AVATAR_ID)));
-                user.setMAvatarPath(cursor.getString(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME_AVATAR_PATH)));
-                user.setMAvatarType(cursor.getInt(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME_AVATAR_TYPE)));
-                user.setMAvatarSuffix(cursor.getString(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME_AVATAR_SUFFIX)));
-                user.setMAvatarLastUpdateTime(cursor.getString(cursor.getColumnIndex(UserDao.USER_COLUMN_NAME_AVATAR_UPDATE_TIME)));
+                user.setMUserNick(cursor.getString(cursor.getColumnIndex(UserDao.
+                        USER_COLUMN_NAME_NICK)));
+                user.setMAvatarId(cursor.getInt(cursor.getColumnIndex(UserDao.
+                        USER_COLUMN_NAME_AVATAR_ID)));
+                user.setMAvatarPath(cursor.getString(cursor.getColumnIndex(UserDao.
+                        USER_COLUMN_NAME_AVATAR_PATH)));
+                user.setMAvatarType(cursor.getInt(cursor.getColumnIndex(UserDao.
+                        USER_COLUMN_NAME_AVATAR_TYPE)));
+                user.setMAvatarSuffix(cursor.getString(cursor.getColumnIndex(UserDao.
+                        USER_COLUMN_NAME_AVATAR_SUFFIX)));
+                user.setMAvatarLastUpdateTime(cursor.getString(cursor.getColumnIndex
+                        (UserDao.USER_COLUMN_NAME_AVATAR_UPDATE_TIME)));
                 EaseCommonUtils.setAppUserInitialLetter(user);
                 users.put(username, user);
             }
@@ -439,7 +472,8 @@ public class SuperWeChatDBManager {
     synchronized public void deleteAppContact(String username){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if(db.isOpen()){
-            db.delete(UserDao.USER_TABLE_NAME, UserDao.USER_COLUMN_NAME + " = ?", new String[]{username});
+            db.delete(UserDao.USER_TABLE_NAME, UserDao.USER_COLUMN_NAME + " = ?",
+                    new String[]{username});
         }
     }
 
