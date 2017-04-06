@@ -43,6 +43,7 @@ import cn.ucai.superwechat.db.InviteMessgeDao;
 import cn.ucai.superwechat.db.UserDao;
 import cn.ucai.superwechat.dialog.TitleMenu.ActionItem;
 import cn.ucai.superwechat.dialog.TitleMenu.TitlePopup;
+import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.widget.ContactItemView;
 
 /**
@@ -171,6 +172,7 @@ public class ContactListFragment extends EaseContactListFragment {
             switch (v.getId()) {
             case R.id.application_item:
                 // 进入申请与通知页面
+                MFGT.gotoNewFriends(getActivity());
                 startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
                 break;
             case R.id.group_item:
