@@ -384,6 +384,7 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onPageSelected(int position) {
         layoutTabhost.setChecked(position);
+        currentTabIndex = position;
     }
 
     @Override
@@ -393,6 +394,7 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onCheckedChange(int checkedPosition, boolean byUser) {
         layoutViewpage.setCurrentItem(checkedPosition, false);
+        currentTabIndex = checkedPosition;
     }
 
     public class MyContactListener implements EMContactListener {
