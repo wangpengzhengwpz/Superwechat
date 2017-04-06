@@ -62,7 +62,7 @@ public class InviteMessage {
 	}
 
 	public String getNickname() {
-		return nickname;
+		return nickname == null ? from : nickname;
 	}
 
 	public void setNickname(String nickname) {

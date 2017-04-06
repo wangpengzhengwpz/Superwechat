@@ -93,7 +93,7 @@ public class EaseUserUtils {
         }
     }
 
-    private static void setAvatar(Context context, String avatarPath, ImageView imageView) {
+    public static void setAvatar(Context context, String avatarPath, ImageView imageView) {
         if (avatarPath != null) {
             try {
                 int avatarResId = Integer.parseInt(avatarPath);

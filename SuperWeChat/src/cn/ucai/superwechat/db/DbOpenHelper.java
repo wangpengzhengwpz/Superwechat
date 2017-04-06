@@ -35,6 +35,8 @@ public class DbOpenHelper extends SQLiteOpenHelper{
 			+ InviteMessgeDao.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 			+ InviteMessgeDao.COLUMN_NAME_FROM + " TEXT, "
 			+ InviteMessgeDao.COLUMN_NAME_GROUP_ID + " TEXT, "
+			+ InviteMessgeDao.COLUMN_NAME_AVATAR + " TEXT, "
+			+ InviteMessgeDao.COLUMN_NAME_NICK + " TEXT, "
 			+ InviteMessgeDao.COLUMN_NAME_GROUP_Name + " TEXT, "
 			+ InviteMessgeDao.COLUMN_NAME_REASON + " TEXT, "
 			+ InviteMessgeDao.COLUMN_NAME_STATUS + " INTEGER, "
