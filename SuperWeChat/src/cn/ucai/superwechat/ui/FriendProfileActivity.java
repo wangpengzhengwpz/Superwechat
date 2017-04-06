@@ -1,5 +1,6 @@
 package cn.ucai.superwechat.ui;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +17,14 @@ import butterknife.OnClick;
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatHelper;
+import cn.ucai.superwechat.db.IUserModel;
+import cn.ucai.superwechat.db.InviteMessgeDao;
+import cn.ucai.superwechat.db.OnCompleteListener;
+import cn.ucai.superwechat.db.UserModel;
 import cn.ucai.superwechat.domain.InviteMessage;
 import cn.ucai.superwechat.utils.MFGT;
+import cn.ucai.superwechat.utils.Result;
+import cn.ucai.superwechat.utils.ResultUtils;
 
 /**
  * Created by w on 2017/4/5.
@@ -38,6 +45,9 @@ public class FriendProfileActivity extends BaseActivity {
     @BindView(R.id.btn_send_video)
     Button btnSendVideo;
     User user = null;
+    IUserModel model;
+    InviteMessage msg;
+    boolean isFriend = false;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -62,8 +72,9 @@ public class FriendProfileActivity extends BaseActivity {
         if (user != null) {
             showUserInfo();
         } else {
-            InviteMessage msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
+            msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
             if (msg != null) {
+                model = new UserModel();
                 user = new User(msg.getFrom());
                 user.setMUserNick(msg.getNickname());
                 user.setAvatar(msg.getAvatar());
@@ -75,7 +86,7 @@ public class FriendProfileActivity extends BaseActivity {
     }
 
     private void showUserInfo() {
-        boolean isFriend = SuperWeChatHelper.getInstance().getAppContactList().
+        isFriend = SuperWeChatHelper.getInstance().getAppContactList().
                 containsKey(user.getMUserName());
         if (isFriend) {
             SuperWeChatHelper.getInstance().saveAppContact(user);
@@ -106,5 +117,35 @@ public class FriendProfileActivity extends BaseActivity {
 
     private void syncUserInfo() {
         //从服务器异步加载用户的最新信息，填充到好友列表或者新的朋友列表
+        model.loadUserInfo(FriendProfileActivity.this, user.getMUserName(),
+                new OnCompleteListener<String>() {
+            @Override
+            public void onSuccess(String s) {
+                if (s != null) {
+                    Result result = ResultUtils.getResultFromJson(s, User.class);
+                    if (result != null && result.isRetMsg()) {
+                        User u = (User) result.getRetData();
+                        if (u != null) {
+                            if (msg != null) {
+                                //update msg
+                                ContentValues values = new ContentValues();
+                                values.put(InviteMessgeDao.COLUMN_NAME_NICK, u.getMUserNick());
+                                values.put(InviteMessgeDao.COLUMN_NAME_AVATAR, u.getAvatar());
+                                InviteMessgeDao dao = new InviteMessgeDao(FriendProfileActivity.this);
+                                dao.updateMessage(msg.getId(), values);
+                            } else if (isFriend) {
+                                //update user
+                                SuperWeChatHelper.getInstance().saveAppContact(u);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
 }
