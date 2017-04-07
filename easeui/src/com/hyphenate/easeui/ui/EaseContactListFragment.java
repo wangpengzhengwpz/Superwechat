@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -212,6 +213,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
     public void refresh() {
         getContactList();
         contactListLayout.refresh();
+        Log.e(TAG, "refresh,contactListLayout.refresh...");
     }
     
 
@@ -228,10 +230,12 @@ public class EaseContactListFragment extends EaseBaseFragment {
      * get contact list and sort, will filter out users in blacklist
      */
     protected void getContactList() {
+        Log.e(TAG, "getContactList...");
         contactList.clear();
         if(contactsMap == null){
             return;
         }
+        Log.e(TAG, "getContactList,contactsMap=" + contactsMap.size());
         synchronized (this.contactsMap) {
             Iterator<Entry<String, User>> iterator = contactsMap.entrySet().iterator();
 //            List<String> blackList = EMClient.getInstance().contactManager().getBlackListUsernames();
