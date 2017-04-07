@@ -777,9 +777,10 @@ public class SuperWeChatHelper {
         public void onContactDeleted(String username) {
             L.e(TAG, "MyContactListener,onContactDeleted username=" + username);
             Map<String, EaseUser> localUsers = SuperWeChatHelper.getInstance().getContactList();
+            SuperWeChatHelper.getInstance().getAppContactList().remove(username);
             localUsers.remove(username);
             userDao.deleteContact(username);
-
+            userDao.deleteAppContact(username);
             inviteMessgeDao.deleteMessage(username);
 
             EMClient.getInstance().chatManager().deleteConversation(username, false);

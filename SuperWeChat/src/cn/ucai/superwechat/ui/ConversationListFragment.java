@@ -26,6 +26,7 @@ import com.hyphenate.easeui.widget.EaseConversationList.EaseConversationListHelp
 import com.hyphenate.util.NetUtils;
 
 public class ConversationListFragment extends EaseConversationListFragment{
+    private static final String TAG = "ConversationListFragment";
 
     private TextView errorText;
 
@@ -127,8 +128,10 @@ public class ConversationListFragment extends EaseConversationListFragment{
             deleteMessage = true;
         } else if (item.getItemId() == R.id.delete_conversation) {
             deleteMessage = false;
+        } else {
+            return false;
         }
-    	EMConversation tobeDeleteCons = conversationListView.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
+        EMConversation tobeDeleteCons = conversationListView.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
     	if (tobeDeleteCons == null) {
     	    return true;
     	}
@@ -147,7 +150,7 @@ public class ConversationListFragment extends EaseConversationListFragment{
 
         // update unread count
         ((MainActivity) getActivity()).updateUnreadLabel();
-        return true;
+        return false;
     }
 
 }
