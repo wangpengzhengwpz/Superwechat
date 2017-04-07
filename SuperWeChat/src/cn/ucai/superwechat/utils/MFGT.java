@@ -46,6 +46,11 @@ public class MFGT {
         startActivity(activity, MainActivity.class);
     }
 
+    public static void gotoMain(Activity activity, boolean isChat) {
+        startActivity(activity, new Intent(activity, MainActivity.class)
+                .putExtra(I.IS_FROM_CHAT, isChat));
+    }
+
     private static void startActivityForResult(Activity activity, Intent intent, int requestCode) {
         activity.startActivityForResult(intent, requestCode);
         activity.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);

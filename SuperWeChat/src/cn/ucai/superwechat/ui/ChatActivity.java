@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.runtimepermissions.PermissionsManager;
+import cn.ucai.superwechat.utils.L;
+import cn.ucai.superwechat.utils.MFGT;
+
 import com.hyphenate.easeui.ui.EaseChatFragment;
 import com.hyphenate.util.EasyUtils;
 
@@ -13,6 +16,7 @@ import com.hyphenate.util.EasyUtils;
  *
  */
 public class ChatActivity extends BaseActivity{
+    private static final String TAG = "ChatActivity";
     public static ChatActivity activityInstance;
     private EaseChatFragment chatFragment;
     String toChatUsername;
@@ -57,6 +61,7 @@ public class ChatActivity extends BaseActivity{
         if (EasyUtils.isSingleActivity(this)) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            MFGT.gotoMain(ChatActivity.this, true);
         }
     }
     

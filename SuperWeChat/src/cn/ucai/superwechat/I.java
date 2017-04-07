@@ -1,7 +1,7 @@
 package cn.ucai.superwechat;
 
 public interface I {
-
+	String IS_FROM_CHAT = "cn.ucai.superwechat_is_chat";
 	public static interface User {
 		String TABLE_NAME							=		"t_superwechat_user";
 		String USER_NAME 							= 		"m_user_name";					//用户账号
