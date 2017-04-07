@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,7 +40,8 @@ import java.util.Map;
  *
  */
 public class EaseConversationListFragment extends EaseBaseFragment{
-	private final static int MSG_REFRESH = 2;
+    private static final String TAG = "EaseConversationListFra";
+    private final static int MSG_REFRESH = 2;
     protected EditText query;
     protected ImageButton clearSearch;
     protected boolean hidden;
@@ -165,7 +167,8 @@ public class EaseConversationListFragment extends EaseBaseFragment{
 	            {
 	            	conversationList.clear();
 	                conversationList.addAll(loadConversationList());
-	                conversationListView.refresh();
+                    Log.e(TAG, "conversationListView," + conversationListView);
+                    conversationListView.refresh();
 	                break;
 	            }
             default:
