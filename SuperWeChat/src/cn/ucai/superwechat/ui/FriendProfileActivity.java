@@ -68,13 +68,13 @@ public class FriendProfileActivity extends BaseActivity {
     }
 
     private void initData() {
+        model = new UserModel();
         user = (User) getIntent().getSerializableExtra(I.User.TABLE_NAME);
         if (user != null) {
             showUserInfo();
         } else {
             msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
             if (msg != null) {
-                model = new UserModel();
                 user = new User(msg.getFrom());
                 user.setMUserNick(msg.getNickname());
                 user.setAvatar(msg.getAvatar());
@@ -113,6 +113,11 @@ public class FriendProfileActivity extends BaseActivity {
         } else {
             //直接添加为好友
         }
+    }
+
+    @OnClick(R.id.btn_send_msg)
+    public void sendMsg() {
+        MFGT.gotoChat(FriendProfileActivity.this, user.getMUserName());
     }
 
     private void syncUserInfo() {

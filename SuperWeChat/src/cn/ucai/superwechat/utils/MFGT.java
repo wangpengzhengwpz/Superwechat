@@ -10,6 +10,7 @@ import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.domain.InviteMessage;
 import cn.ucai.superwechat.ui.AddContactActivity;
+import cn.ucai.superwechat.ui.ChatActivity;
 import cn.ucai.superwechat.ui.FriendProfileActivity;
 import cn.ucai.superwechat.ui.GuideActivity;
 import cn.ucai.superwechat.ui.LoginActivity;
@@ -92,5 +93,10 @@ public class MFGT {
 
     public static void gotoNewFriends(Activity activity) {
         startActivity(activity, NewFriendsMsgActivity.class);
+    }
+
+    public static void gotoChat(Activity activity, String userName) {
+        startActivity(activity, new Intent(activity, ChatActivity.class)
+                .putExtra("userId", userName));
     }
 }
