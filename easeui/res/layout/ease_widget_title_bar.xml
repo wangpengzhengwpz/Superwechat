@@ -20,7 +20,7 @@
             android:layout_centerInParent="true"
             android:scaleType="centerInside" />
     </RelativeLayout>
-    
+
     <RelativeLayout
         android:id="@+id/right_layout"
         android:layout_width="50dp"
@@ -43,6 +43,7 @@
         android:layout_centerInParent="true"
         android:layout_toRightOf="@id/left_layout"
         android:layout_toLeftOf="@id/right_layout"
+        android:gravity="center"
         android:maxLines="1"
         android:textColor="#ffffff"
         android:textSize="20sp" />
