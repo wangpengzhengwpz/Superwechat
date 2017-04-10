@@ -45,6 +45,7 @@
         android:layout_toLeftOf="@id/right_layout"
         android:gravity="center"
         android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="#ffffff"
         android:textSize="20sp" />
 </RelativeLayout>
