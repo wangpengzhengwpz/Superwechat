@@ -26,16 +26,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMGroup;
+import com.hyphenate.chat.EMGroupManager;
 import com.hyphenate.chat.EMGroupManager.EMGroupOptions;
 import com.hyphenate.chat.EMGroupManager.EMGroupStyle;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.GroupModel;
+import cn.ucai.superwechat.db.IGroupModel;
+import cn.ucai.superwechat.db.OnCompleteListener;
+import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MFGT;
+import cn.ucai.superwechat.utils.Result;
+import cn.ucai.superwechat.utils.ResultUtils;
 
+import com.hyphenate.easeui.domain.Group;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
 import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.exceptions.HyphenateException;
 
+import java.io.File;
+
 public class NewGroupActivity extends BaseActivity {
+	private static final String TAG = "NewGroupActivity";
 	private EditText groupNameEditText;
 	private ProgressDialog progressDialog;
 	private EditText introductionEditText;
@@ -43,6 +55,7 @@ public class NewGroupActivity extends BaseActivity {
 	private CheckBox memberCheckbox;
 	private TextView secondTextView;
 	EaseTitleBar titleBar;
+	IGroupModel model;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +68,7 @@ public class NewGroupActivity extends BaseActivity {
 		secondTextView = (TextView) findViewById(R.id.second_desc);
 		titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
 		initBack();
+		model = new GroupModel();
 
 		publibCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -101,7 +115,7 @@ public class NewGroupActivity extends BaseActivity {
 				String desc = introductionEditText.getText().toString();
 				String[] members = data.getStringArrayExtra("newmembers");
 				try {
-					EMGroupOptions option = new EMGroupOptions();
+					EMGroupManager.EMGroupOptions option = new EMGroupManager.EMGroupOptions();
 					option.maxUsers = 200;
 					option.inviteNeedConfirm = true;
 
@@ -109,18 +123,12 @@ public class NewGroupActivity extends BaseActivity {
 					reason  = EMClient.getInstance().getCurrentUser() + reason + groupName;
 
 					if(publibCheckBox.isChecked()){
-						option.style = memberCheckbox.isChecked() ? EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupStyle.EMGroupStylePublicOpenJoin;
+						option.style = memberCheckbox.isChecked() ? EMGroupManager.EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupStyle.EMGroupStylePublicOpenJoin;
 					}else{
-						option.style = memberCheckbox.isChecked()?EMGroupStyle.EMGroupStylePrivateMemberCanInvite:EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
+						option.style = memberCheckbox.isChecked() ? EMGroupManager.EMGroupStyle.EMGroupStylePrivateMemberCanInvite : EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
 					}
-					EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
-					runOnUiThread(new Runnable() {
-						public void run() {
-							progressDialog.dismiss();
-							setResult(RESULT_OK);
-							finish();
-						}
-					});
+					EMGroup emGroup = EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
+					createAppGroup(emGroup);
 				} catch (final HyphenateException e) {
 					runOnUiThread(new Runnable() {
 						public void run() {
@@ -132,6 +140,52 @@ public class NewGroupActivity extends BaseActivity {
 
 			}
 		}).start();
+	}
+
+	private void createAppGroup(EMGroup emGroup) {
+		if (emGroup != null) {
+			File file = null;
+			model.newGroup(NewGroupActivity.this, emGroup.getGroupId(), emGroup.getGroupName(),
+					emGroup.getDescription(), emGroup.getOwner(), emGroup.isPublic(),
+					emGroup.isAllowInvites(), file, new OnCompleteListener<String>() {
+						@Override
+						public void onSuccess(String s) {
+							L.e(TAG, "createAppGroup,s=" + s);
+							boolean success = false;
+							if (s != null) {
+								Result result = ResultUtils.getResultFromJson(s, Group.class);
+								if (result != null && result.isRetMsg()) {
+									Group group = (Group) result.getRetData();
+									if (group != null) {
+										success = true;
+									}
+								}
+							}
+							createSuccess(success);
+						}
+
+						@Override
+						public void onError(String error) {
+							createSuccess(false);
+						}
+					});
+		}
+	}
+
+	private void createSuccess(final boolean success) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				progressDialog.dismiss();
+				if (success) {
+					setResult(RESULT_OK);
+					finish();
+				} else {
+					Toast.makeText(NewGroupActivity.this,R.string.Failed_to_create_groups,
+							Toast.LENGTH_LONG).show();
+				}
+			}
+		});
 	}
 
 	private void showDialog() {

@@ -1518,16 +1518,8 @@ public class SuperWeChatHelper {
      * @return
      */
     public Map<String, User> getAppContactList() {
-        L.e(TAG, "getAppContactList....");
         if ((isLoggedIn() && appContactList == null) || appContactList.size() == 0) {
-            L.e(TAG, "getAppContactList....goto databases get userlist");
             appContactList = demoModel.getAppContactList();
-        }
-        if (appContactList != null) {
-            L.e(TAG, "getAppContactList....appContactList=" + appContactList.size());
-            L.e(TAG, "getAppContactList....appContactList.containsKey(EMClient.getInstance()" +
-                    ".getCurrentUser())=" + appContactList.containsKey(EMClient.getInstance()
-                    .getCurrentUser()));
         }
 
         // return a empty non-null object to avoid app crash

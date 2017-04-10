@@ -184,6 +184,9 @@ public class OkHttpUtils<T> {
         if (mUrl == null) {
             return this;
         }
+        if (file == null) {
+            return this;
+        }
         RequestBody fileBody = RequestBody.create(MediaType.parse(guessMimeType(file.getName())), file);
         mFileBody = new MultipartBody.Builder().addFormDataPart("filename", file.getName(), fileBody).build();
         return this;

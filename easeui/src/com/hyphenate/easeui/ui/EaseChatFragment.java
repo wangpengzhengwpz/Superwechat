@@ -187,7 +187,6 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
         if (chatType == EaseConstant.CHATTYPE_SINGLE) {
             // set title
             User user = EaseUserUtils.getAppUserInfo(toChatUsername);
-            Log.e(TAG, "setUpView,user=" + user);
             if (user != null) {
                 if (user.getMUserNick() != null) {
                     titleBar.setTitle(user.getMUserNick());
