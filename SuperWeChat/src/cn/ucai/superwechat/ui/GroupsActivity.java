@@ -34,6 +34,9 @@ import com.hyphenate.chat.EMGroup;
 import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.adapter.GroupAdapter;
+import cn.ucai.superwechat.utils.MFGT;
+
+import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.List;
@@ -47,7 +50,7 @@ public class GroupsActivity extends BaseActivity {
 	public static GroupsActivity instance;
 	private View progressBar;
 	private SwipeRefreshLayout swipeRefreshLayout;
-	
+	EaseTitleBar titleBar;
 	
 	Handler handler = new Handler(){
 	    public void handleMessage(android.os.Message msg) {
@@ -79,7 +82,10 @@ public class GroupsActivity extends BaseActivity {
 		//show group list
         groupAdapter = new GroupAdapter(this, 1, grouplist);
         groupListView.setAdapter(groupAdapter);
-		
+
+		titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
+		initBack();
+
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
 		swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
 		                R.color.holo_orange_light, R.color.holo_red_light);
@@ -163,7 +169,12 @@ public class GroupsActivity extends BaseActivity {
 		instance = null;
 	}
 
-	public void back(View view) {
-		finish();
+	public void initBack() {
+		titleBar.setLeftLayoutClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				MFGT.finish(GroupsActivity.this);
+			}
+		});
 	}
 }

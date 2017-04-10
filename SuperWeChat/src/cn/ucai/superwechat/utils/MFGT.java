@@ -3,6 +3,7 @@ package cn.ucai.superwechat.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 
 import com.hyphenate.easeui.domain.User;
 
@@ -12,6 +13,7 @@ import cn.ucai.superwechat.domain.InviteMessage;
 import cn.ucai.superwechat.ui.AddContactActivity;
 import cn.ucai.superwechat.ui.ChatActivity;
 import cn.ucai.superwechat.ui.FriendProfileActivity;
+import cn.ucai.superwechat.ui.GroupsActivity;
 import cn.ucai.superwechat.ui.GuideActivity;
 import cn.ucai.superwechat.ui.LoginActivity;
 import cn.ucai.superwechat.ui.MainActivity;
@@ -108,5 +110,9 @@ public class MFGT {
     public static void gotoChat(Activity activity, String userName) {
         startActivity(activity, new Intent(activity, ChatActivity.class)
                 .putExtra("userId", userName));
+    }
+
+    public static void gotoGroup(Activity activity) {
+        startActivity(activity, GroupsActivity.class);
     }
 }

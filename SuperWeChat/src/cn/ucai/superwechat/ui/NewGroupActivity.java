@@ -29,7 +29,10 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroupManager.EMGroupOptions;
 import com.hyphenate.chat.EMGroupManager.EMGroupStyle;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.utils.MFGT;
+
 import com.hyphenate.easeui.widget.EaseAlertDialog;
+import com.hyphenate.easeui.widget.EaseTitleBar;
 import com.hyphenate.exceptions.HyphenateException;
 
 public class NewGroupActivity extends BaseActivity {
@@ -39,6 +42,7 @@ public class NewGroupActivity extends BaseActivity {
 	private CheckBox publibCheckBox;
 	private CheckBox memberCheckbox;
 	private TextView secondTextView;
+	EaseTitleBar titleBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +53,9 @@ public class NewGroupActivity extends BaseActivity {
 		publibCheckBox = (CheckBox) findViewById(R.id.cb_public);
 		memberCheckbox = (CheckBox) findViewById(R.id.cb_member_inviter);
 		secondTextView = (TextView) findViewById(R.id.second_desc);
-		
+		titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
+		initBack();
+
 		publibCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 		    @Override
@@ -79,57 +85,69 @@ public class NewGroupActivity extends BaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		String st1 = getResources().getString(R.string.Is_to_create_a_group_chat);
-		final String st2 = getResources().getString(R.string.Failed_to_create_groups);
 		if (resultCode == RESULT_OK) {
 			//new group
-			progressDialog = new ProgressDialog(this);
-			progressDialog.setMessage(st1);
-			progressDialog.setCanceledOnTouchOutside(false);
-			progressDialog.show();
-
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					final String groupName = groupNameEditText.getText().toString().trim();
-					String desc = introductionEditText.getText().toString();
-					String[] members = data.getStringArrayExtra("newmembers");
-					try {
-						EMGroupOptions option = new EMGroupOptions();
-					    option.maxUsers = 200;
-						option.inviteNeedConfirm = true;
-					    
-					    String reason = NewGroupActivity.this.getString(R.string.invite_join_group);
-					    reason  = EMClient.getInstance().getCurrentUser() + reason + groupName;
-					    
-						if(publibCheckBox.isChecked()){
-						    option.style = memberCheckbox.isChecked() ? EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupStyle.EMGroupStylePublicOpenJoin;
-						}else{
-						    option.style = memberCheckbox.isChecked()?EMGroupStyle.EMGroupStylePrivateMemberCanInvite:EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
-						}
-                        EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
-						runOnUiThread(new Runnable() {
-							public void run() {
-								progressDialog.dismiss();
-								setResult(RESULT_OK);
-								finish();
-							}
-						});
-					} catch (final HyphenateException e) {
-						runOnUiThread(new Runnable() {
-							public void run() {
-								progressDialog.dismiss();
-								Toast.makeText(NewGroupActivity.this, st2 + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-							}
-						});
-					}
-					
-				}
-			}).start();
+			showDialog();
+			createEMGroup(data);
 		}
 	}
 
-	public void back(View view) {
-		finish();
+	private void createEMGroup(final Intent data) {
+		final String st2 = getResources().getString(R.string.Failed_to_create_groups);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final String groupName = groupNameEditText.getText().toString().trim();
+				String desc = introductionEditText.getText().toString();
+				String[] members = data.getStringArrayExtra("newmembers");
+				try {
+					EMGroupOptions option = new EMGroupOptions();
+					option.maxUsers = 200;
+					option.inviteNeedConfirm = true;
+
+					String reason = NewGroupActivity.this.getString(R.string.invite_join_group);
+					reason  = EMClient.getInstance().getCurrentUser() + reason + groupName;
+
+					if(publibCheckBox.isChecked()){
+						option.style = memberCheckbox.isChecked() ? EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupStyle.EMGroupStylePublicOpenJoin;
+					}else{
+						option.style = memberCheckbox.isChecked()?EMGroupStyle.EMGroupStylePrivateMemberCanInvite:EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
+					}
+					EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
+					runOnUiThread(new Runnable() {
+						public void run() {
+							progressDialog.dismiss();
+							setResult(RESULT_OK);
+							finish();
+						}
+					});
+				} catch (final HyphenateException e) {
+					runOnUiThread(new Runnable() {
+						public void run() {
+							progressDialog.dismiss();
+							Toast.makeText(NewGroupActivity.this, st2 + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+						}
+					});
+				}
+
+			}
+		}).start();
+	}
+
+	private void showDialog() {
+		String st1 = getResources().getString(R.string.Is_to_create_a_group_chat);
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setMessage(st1);
+		progressDialog.setCanceledOnTouchOutside(false);
+		progressDialog.show();
+	}
+
+	public void initBack() {
+		titleBar.setLeftLayoutClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				MFGT.finish(NewGroupActivity.this);
+			}
+		});
 	}
 }
