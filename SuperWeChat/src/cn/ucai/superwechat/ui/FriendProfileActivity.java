@@ -73,32 +73,39 @@ public class FriendProfileActivity extends BaseActivity {
     private void initData() {
         model = new UserModel();
         user = (User) getIntent().getSerializableExtra(I.User.TABLE_NAME);
-        if (user != null) {
-            showUserInfo();
-        } else {
+        if (user == null) {
             msg = (InviteMessage) getIntent().getSerializableExtra(I.User.NICK);
             if (msg != null) {
                 user = new User(msg.getFrom());
                 user.setMUserNick(msg.getNickname());
                 user.setAvatar(msg.getAvatar());
-                showUserInfo();
-            } else {
-                MFGT.finish(FriendProfileActivity.this);
             }
+        }
+        if (user == null) {
+            String username = getIntent().getStringExtra(I.User.USER_NAME);
+            if (username != null) {
+                user = new User(username);
+            }
+        }
+        if (user == null) {
+            MFGT.finish(FriendProfileActivity.this);
+        } else {
+            showUserInfo();
+            syncUserInfo();
         }
     }
 
     private void showUserInfo() {
         isFriend = SuperWeChatHelper.getInstance().getAppContactList().
                 containsKey(user.getMUserName());
-        if (isFriend) {
+        if (isFriend && user.getMUserNick() != null) {
             SuperWeChatHelper.getInstance().saveAppContact(user);
         }
         tvUserinfoName.setText(user.getMUserName());
         EaseUserUtils.setAppUserAvatar(FriendProfileActivity.this, user, profileImage);
         EaseUserUtils.setAppUserNick(user, tvUserinfoNick);
         showFriend(isFriend);
-        syncUserInfo();
+//        syncUserInfo();
     }
 
     private void showFriend(boolean isFriend) {
@@ -162,6 +169,8 @@ public class FriendProfileActivity extends BaseActivity {
                                 //update user
                                 SuperWeChatHelper.getInstance().saveAppContact(u);
                             }
+                            user = u;
+                            showUserInfo();
                         }
                     }
                 }

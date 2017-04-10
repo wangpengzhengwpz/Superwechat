@@ -91,6 +91,11 @@ public class MFGT {
                 .putExtra(I.User.NICK, msg));
     }
 
+    public static void gotoFriend(Context activity, String username) {
+        startActivity((Activity) activity, new Intent(activity, FriendProfileActivity.class)
+                .putExtra(I.User.USER_NAME, username));
+    }
+
     public static void gotoSendAppFriend(Activity activity, String userName) {
         startActivity(activity, new Intent(activity, SendAddFriendActivity.class)
                 .putExtra(I.User.USER_NAME, userName));
