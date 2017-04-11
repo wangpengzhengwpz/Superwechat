@@ -39,6 +39,14 @@ import com.hyphenate.chat.EMCursorResult;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMPushConfigs;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.GroupModel;
+import cn.ucai.superwechat.db.IGroupModel;
+import cn.ucai.superwechat.db.OnCompleteListener;
+import cn.ucai.superwechat.utils.L;
+import cn.ucai.superwechat.utils.Result;
+import cn.ucai.superwechat.utils.ResultUtils;
+
+import com.hyphenate.easeui.domain.Group;
 import com.hyphenate.easeui.ui.EaseGroupListener;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
@@ -89,6 +97,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 	GroupChangeListener groupChangeListener;
 	EaseTitleBar titleBar;
+	IGroupModel model;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +105,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	    
         groupId = getIntent().getStringExtra("groupId");
         group = EMClient.getInstance().groupManager().getGroup(groupId);
+
+		model = new GroupModel();
 
         // we are not supposed to show the group if we don't find the group
         if(group == null){
@@ -725,6 +736,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 										break;
 									case R.id.menu_item_remove_member:
 										EMClient.getInstance().groupManager().removeUserFromGroup(groupId, operationUserId);
+										L.e(TAG, "start");
+										getGroupIdAndRemoveMember(group.getGroupId());
+										L.e(TAG, "finish");
 										break;
 									case R.id.menu_item_add_to_blacklist:
 										EMClient.getInstance().groupManager().blockUser(groupId, operationUserId);
@@ -773,6 +787,50 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			});
 		}
 		return dialog;
+	}
+
+	private void getGroupIdAndRemoveMember(String groupId) {
+		L.e(TAG, "getGroupIdAndRemoveMember,groupId=" + groupId);
+		model.findGroupByHxId(GroupDetailsActivity.this, groupId, new OnCompleteListener<String>() {
+			@Override
+			public void onSuccess(String s) {
+				L.e(TAG, "onSuccess,s=" + s);
+				if (s != null) {
+					Result result = ResultUtils.getResultFromJson(s, Group.class);
+					if (result != null && result.isRetMsg()) {
+						Group group = (Group) result.getRetData();
+						L.e(TAG, "group=" + group.toString());
+						removeMember(String.valueOf(group.getMGroupId()));
+					}
+				}
+			}
+
+			@Override
+			public void onError(String error) {
+
+			}
+		});
+	}
+
+	private void removeMember(String groupId) {
+		L.e(TAG, "groupId=" + groupId);
+		model.deleteGroupMember(GroupDetailsActivity.this, groupId, operationUserId, new OnCompleteListener<String>() {
+			@Override
+			public void onSuccess(String s) {
+				L.e(TAG, "removeMember,s=" + s);
+				if (s != null) {
+					Result result = ResultUtils.getResultFromJson(s, Group.class);
+					if (result != null && result.isRetMsg()) {
+						Toast.makeText(GroupDetailsActivity.this, "成功", Toast.LENGTH_SHORT).show();
+					}
+				}
+			}
+
+			@Override
+			public void onError(String error) {
+
+			}
+		});
 	}
 
 	void setVisibility(Dialog viewGroups, int[] ids, boolean[] visibilities) throws Exception {
