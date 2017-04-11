@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/common_bg"
-    android:orientation="vertical" >
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/common_bg"
+	android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_top_bar"
-        android:background="@color/common_bottom_bar_selected_bg"
-        android:gravity="center_vertical" >
+	<com.hyphenate.easeui.widget.EaseTitleBar
+		android:id="@+id/title_bar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:titleBarLeftImage="@drawable/em_mm_title_back"
+		app:titleBarTitle="@string/group_chat">
 
-        <include layout="@layout/ease_commom_back_btn" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/group_chat"
-            android:textColor="@color/bottom_text_color_normal"
-            android:textSize="18sp" />
-    </RelativeLayout>
+	</com.hyphenate.easeui.widget.EaseTitleBar>
 
     <FrameLayout
         android:layout_width="match_parent"

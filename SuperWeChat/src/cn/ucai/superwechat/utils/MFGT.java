@@ -112,7 +112,7 @@ public class MFGT {
                 .putExtra("userId", userName));
     }
 
-    public static void gotoGroup(Activity activity) {
+    public static void gotoGroups(Activity activity) {
         startActivity(activity, GroupsActivity.class);
     }
 }
