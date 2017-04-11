@@ -16,7 +16,6 @@ package cn.ucai.superwechat.adapter;
 import java.util.List;
 
 import com.hyphenate.chat.EMClient;
-import com.hyphenate.easeui.domain.Group;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 
 import cn.ucai.superwechat.R;
@@ -70,36 +69,35 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		
+
 		String str1 = context.getResources().getString(R.string.Has_agreed_to_your_friend_request);
 		String str2 = context.getResources().getString(R.string.agree);
-		
+
 		String str3 = context.getResources().getString(R.string.Request_to_add_you_as_a_friend);
 		String str4 = context.getResources().getString(R.string.Apply_to_the_group_of);
 		String str5 = context.getResources().getString(R.string.Has_agreed_to);
 		String str6 = context.getResources().getString(R.string.Has_refused_to);
-		
+
 		String str7 = context.getResources().getString(R.string.refuse);
 		String str8 = context.getResources().getString(R.string.invite_join_group);
         String str9 = context.getResources().getString(R.string.accept_join_group);
 		String str10 = context.getResources().getString(R.string.refuse_join_group);
-		
+
 		final InviteMessage msg = getItem(position);
 		if (msg != null) {
-		    
+
 		    holder.agree.setVisibility(View.INVISIBLE);
-		    
+
 			if(msg.getGroupId() != null){ // show group name
 				holder.groupContainer.setVisibility(View.VISIBLE);
-				holder.groupname.setText(msg.getGroupId());
-				holder.name.setText(msg.getGroupName());
-				EaseUserUtils.setGroupAvatar(context, Group.getAvatar(msg.getGroupId()), holder.avator);
+				holder.groupname.setText(msg.getGroupName());
 			} else{
 				holder.groupContainer.setVisibility(View.GONE);
-
 			}
-			
+
 			holder.reason.setText(msg.getReason());
+			holder.name.setText(msg.getNickname());
+			EaseUserUtils.setAvatar(context,msg.getAvatar(),holder.avator);
 			// holder.time.setText(DateUtils.getTimestampString(new
 			// Date(msg.getTime())));
 			if (msg.getStatus() == InviteMessage.InviteMesageStatus.BEAGREED) {
