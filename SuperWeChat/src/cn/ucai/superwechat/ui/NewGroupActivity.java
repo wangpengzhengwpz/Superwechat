@@ -37,8 +37,16 @@ import android.widget.Toast;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupManager;
-import com.hyphenate.chat.EMGroupManager.EMGroupOptions;
-import com.hyphenate.chat.EMGroupManager.EMGroupStyle;
+import com.hyphenate.easeui.domain.Group;
+import com.hyphenate.easeui.widget.EaseAlertDialog;
+import com.hyphenate.easeui.widget.EaseTitleBar;
+import com.hyphenate.exceptions.HyphenateException;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
@@ -49,18 +57,6 @@ import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.MFGT;
 import cn.ucai.superwechat.utils.Result;
 import cn.ucai.superwechat.utils.ResultUtils;
-
-import com.hyphenate.easeui.domain.Group;
-import com.hyphenate.easeui.widget.EaseAlertDialog;
-import com.hyphenate.easeui.widget.EaseTitleBar;
-import com.hyphenate.exceptions.HyphenateException;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
 
 import static cn.ucai.superwechat.I.REQUEST_CODE_PICK_PIC;
 import static cn.ucai.superwechat.ui.UserProfileActivity.getAvatarPath;
@@ -95,6 +91,7 @@ public class NewGroupActivity extends BaseActivity {
 		initBack();
 		model = new GroupModel();
 		setListener();
+
 	}
 
 	private void setListener() {
@@ -123,7 +120,7 @@ public class NewGroupActivity extends BaseActivity {
 	public void save(View v) {
 		String name = groupNameEditText.getText().toString();
 		if (TextUtils.isEmpty(name)) {
-		    new EaseAlertDialog(this, R.string.Group_name_cannot_be_empty).show();
+			new EaseAlertDialog(this, R.string.Group_name_cannot_be_empty).show();
 		} else {
 			// select from contact list
 			startActivityForResult(new Intent(this, GroupPickContactsActivity.class)
@@ -134,7 +131,7 @@ public class NewGroupActivity extends BaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		switch (requestCode) {
-			case REQUEST_CODE_PICK_PIC:
+			case I.REQUEST_CODE_PICK_PIC:
 				if (data == null || data.getData() == null) {
 					return;
 				}
@@ -147,7 +144,7 @@ public class NewGroupActivity extends BaseActivity {
 				break;
 			case I.REQUEST_CODE_PICK_CONTACT:
 				if (resultCode == RESULT_OK) {
-					// new group
+					//new group
 					showDialog();
 					createEMGroup(data);
 				}
@@ -175,12 +172,13 @@ public class NewGroupActivity extends BaseActivity {
 					reason  = EMClient.getInstance().getCurrentUser() + reason + groupName;
 
 					if(publibCheckBox.isChecked()){
-						option.style = memberCheckbox.isChecked() ? EMGroupManager.EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupStyle.EMGroupStylePublicOpenJoin;
+						option.style = memberCheckbox.isChecked() ? EMGroupManager.EMGroupStyle.EMGroupStylePublicJoinNeedApproval : EMGroupManager.EMGroupStyle.EMGroupStylePublicOpenJoin;
 					}else{
-						option.style = memberCheckbox.isChecked() ? EMGroupManager.EMGroupStyle.EMGroupStylePrivateMemberCanInvite : EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
+						option.style = memberCheckbox.isChecked()? EMGroupManager.EMGroupStyle.EMGroupStylePrivateMemberCanInvite: EMGroupManager.EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
 					}
 					EMGroup emGroup = EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
-					createAppGroup(emGroup, members);
+					createAppGroup(emGroup,members);
+
 				} catch (final HyphenateException e) {
 					runOnUiThread(new Runnable() {
 						public void run() {
@@ -194,83 +192,84 @@ public class NewGroupActivity extends BaseActivity {
 		}).start();
 	}
 
-	private void createAppGroup(final EMGroup emGroup, final String[] members) {
-		if (emGroup != null) {
+	private void createAppGroup(final EMGroup emGroup,final String[] members) {
+		if (emGroup!=null){
 			model.newGroup(NewGroupActivity.this, emGroup.getGroupId(), emGroup.getGroupName(),
-					emGroup.getDescription(), emGroup.getOwner(), emGroup.isPublic(),
-					emGroup.isAllowInvites(), avatarFile, new OnCompleteListener<String>() {
+					emGroup.getDescription(), emGroup.getOwner(), emGroup.isPublic(), emGroup.isAllowInvites(),
+					avatarFile, new OnCompleteListener<String>() {
 						@Override
 						public void onSuccess(String s) {
-							L.e(TAG, "createAppGroup,s=" + s);
+							L.e(TAG,"createAppGroup,s="+s);
 							boolean success = false;
-							if (s != null) {
+							if (s!=null){
 								Result result = ResultUtils.getResultFromJson(s, Group.class);
-								if (result != null && result.isRetMsg()) {
+								if (result!=null && result.isRetMsg()){
 									Group group = (Group) result.getRetData();
-									if (group != null) {
-										if (members.length > 0) {
-											addMembers(group.getMGroupHxid(), getMembers(members));
-										} else {
+									if (group!=null){
+										if (members.length>0){
+											addMembers(group.getMGroupHxid(),getMembers(members));
+										}else{
 											success = true;
 										}
 									}
 								}
 							}
-							if (members.length <= 0) {
-								createSuccess(success);
+							if (members.length<=0) {
+								createSucces(success);
 							}
 						}
 
 						@Override
 						public void onError(String error) {
-							createSuccess(false);
+							createSucces(false);
 						}
 					});
 		}
 	}
 
-	private String getMembers(String[] members) {
+	private String getMembers(String[] members){
 		String m = Arrays.toString(members).toString();
 		StringBuffer str = new StringBuffer();
 		for (String member : members) {
 			str.append(member).append(",");
 		}
-		L.e(TAG, "getMembers,str=" + str);
+		L.e(TAG,"getMembers,str="+str);
 		return str.toString();
 	}
-	private void addMembers(String hxid, String members) {
-		L.e(TAG, "addMembers,members=" + members);
-		model.addMembers(NewGroupActivity.this, members, hxid, new OnCompleteListener<String>() {
-			@Override
-			public void onSuccess(String s) {
-				boolean success = false;
-				if (s != null) {
-					Result result = ResultUtils.getResultFromJson(s, Group.class);
-					if (result != null && result.isRetMsg()) {
-						success = true;
-					}
-				}
-				createSuccess(success);
-			}
 
-			@Override
-			public void onError(String error) {
-				L.e(TAG, "addMembers,error=" + error);
-				createSuccess(false);
-			}
-		});
+	private void addMembers(String hxid,String members){
+		L.e(TAG,"addMembers,members="+members);
+		model.addMembers(NewGroupActivity.this, members, hxid,
+				new OnCompleteListener<String>() {
+					@Override
+					public void onSuccess(String s) {
+						boolean success = false;
+						if (s!=null){
+							Result result = ResultUtils.getResultFromJson(s, Group.class);
+							if (result!=null && result.isRetMsg()){
+								success = true;
+							}
+						}
+						createSucces(success);
+					}
+
+					@Override
+					public void onError(String error) {
+						L.e(TAG,"addMembers,error="+error);
+						createSucces(false);
+					}
+				});
 	}
 
-	private void createSuccess(final boolean success) {
+	private void createSucces(final boolean success){
 		runOnUiThread(new Runnable() {
-			@Override
 			public void run() {
 				progressDialog.dismiss();
 				if (success) {
 					setResult(RESULT_OK);
 					finish();
-				} else {
-					Toast.makeText(NewGroupActivity.this,R.string.Failed_to_create_groups,
+				}else{
+					Toast.makeText(NewGroupActivity.this, R.string.Failed_to_create_groups,
 							Toast.LENGTH_LONG).show();
 				}
 			}
@@ -294,33 +293,32 @@ public class NewGroupActivity extends BaseActivity {
 		});
 	}
 
-	private void uploadHeadPhoto() {
+	public void uploadHeadPhoto() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.dl_title_upload_photo);
-		builder.setItems(new String[]{getString(R.string.dl_msg_take_photo),
-				getString(R.string.dl_msg_local_upload)}, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				switch (which) {
-					case 0:
-						Toast.makeText(NewGroupActivity.this, getString(R.string.toast_no_support),
-								Toast.LENGTH_SHORT).show();
-						break;
-					case 1:
-						Intent pickIntent = new Intent(Intent.ACTION_PICK, null);
-						pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-						startActivityForResult(pickIntent, REQUEST_CODE_PICK_PIC);
-						break;
-					default:
-						break;
-				}
-			}
-		});
+		builder.setItems(new String[]{getString(R.string.dl_msg_take_photo), getString(R.string.dl_msg_local_upload)},
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						switch (which) {
+							case 0:
+								Toast.makeText(NewGroupActivity.this, getString(R.string.toast_no_support),
+										Toast.LENGTH_SHORT).show();
+								break;
+							case 1:
+								Intent pickIntent = new Intent(Intent.ACTION_PICK, null);
+								pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+								startActivityForResult(pickIntent, REQUEST_CODE_PICK_PIC);
+								break;
+							default:
+								break;
+						}
+					}
+				});
 		builder.create().show();
 	}
-
-	private void startPhotoZoom(Uri uri) {
+	public void startPhotoZoom(Uri uri) {
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");
 		intent.putExtra("crop", true);
@@ -328,49 +326,48 @@ public class NewGroupActivity extends BaseActivity {
 		intent.putExtra("aspectY", 1);
 		intent.putExtra("outputX", 300);
 		intent.putExtra("outputY", 300);
-		intent.putExtra("return_data", true);
+		intent.putExtra("return-data", true);
 		intent.putExtra("noFaceDetection", true);
-		startActivityForResult(intent,I.REQUEST_CODE_CUTTING);
+		startActivityForResult(intent, I.REQUEST_CODE_CUTTING);
 	}
 
 	/**
 	 * save the picture data
+	 *
 	 * @param picdata
-     */
-	public void setPicToView(Intent picdata) {
-		L.e(TAG, "setPicToView,picdata=" + picdata);
+	 */
+	private void setPicToView(Intent picdata) {
+		L.e(TAG,"setPicToView,picdata="+picdata);
 		Bundle extras = picdata.getExtras();
-		L.e(TAG, "setPicToView,extras=" + extras);
+		L.e(TAG,"setPicToView,extras="+extras);
 		if (extras != null) {
 			Bitmap photo = extras.getParcelable("data");
-			L.e(TAG, "setPicToView,photo=" + photo);
+			L.e(TAG,"setPicToView,photo="+photo);
 			Drawable drawable = new BitmapDrawable(getResources(), photo);
-			L.e(TAG, "setPicToView,drawable=" + drawable);
+			L.e(TAG,"setPicToView,drawable="+drawable);
 			ivIcon.setImageDrawable(drawable);
 			saveBitmapFile(photo);
 		}
 	}
-
 	private void saveBitmapFile(Bitmap bitmap) {
 		if (bitmap != null) {
-			String imagePath = getAvatarPath(NewGroupActivity.this, I.AVATAR_TYPE) + "/" + getAvatarName() + ".jpg";
+			String imagePath = getAvatarPath(NewGroupActivity.this,I.AVATAR_TYPE)+"/"+getAvatarName()+".jpg";
 			File file = new File(imagePath);//将要保存图片的路径
-			L.e("file path=" + file.getAbsolutePath());
+			L.e("file path="+file.getAbsolutePath());
 			try {
 				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
 				bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
 				bos.flush();
 				bos.close();
-			}  catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			avatarFile = file;
+			avatarFile =  file;
 		}
 	}
-
-	public String getAvatarName() {
-		avatarName = I.AVATAR_TYPE_GROUP_PATH + System.currentTimeMillis();
-		L.e(TAG, "avatarName=" + avatarName);
+	private String getAvatarName() {
+		avatarName = I.AVATAR_TYPE_GROUP_PATH+ System.currentTimeMillis();
+		L.e(TAG,"avatarname="+avatarName);
 		return avatarName;
 	}
 }
