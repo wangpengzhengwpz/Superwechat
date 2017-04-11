@@ -60,6 +60,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static cn.ucai.superwechat.I.REQUEST_CODE_PICK_PIC;
 import static cn.ucai.superwechat.ui.UserProfileActivity.getAvatarPath;
@@ -179,7 +180,7 @@ public class NewGroupActivity extends BaseActivity {
 						option.style = memberCheckbox.isChecked() ? EMGroupManager.EMGroupStyle.EMGroupStylePrivateMemberCanInvite : EMGroupStyle.EMGroupStylePrivateOnlyOwnerInvite;
 					}
 					EMGroup emGroup = EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
-					createAppGroup(emGroup);
+					createAppGroup(emGroup, members);
 				} catch (final HyphenateException e) {
 					runOnUiThread(new Runnable() {
 						public void run() {
@@ -193,7 +194,7 @@ public class NewGroupActivity extends BaseActivity {
 		}).start();
 	}
 
-	private void createAppGroup(EMGroup emGroup) {
+	private void createAppGroup(final EMGroup emGroup, final String[] members) {
 		if (emGroup != null) {
 			model.newGroup(NewGroupActivity.this, emGroup.getGroupId(), emGroup.getGroupName(),
 					emGroup.getDescription(), emGroup.getOwner(), emGroup.isPublic(),
@@ -207,11 +208,17 @@ public class NewGroupActivity extends BaseActivity {
 								if (result != null && result.isRetMsg()) {
 									Group group = (Group) result.getRetData();
 									if (group != null) {
-										success = true;
+										if (members.length > 0) {
+											addMembers(group.getMGroupHxid(), getMembers(members));
+										} else {
+											success = true;
+										}
 									}
 								}
 							}
-							createSuccess(success);
+							if (members.length <= 0) {
+								createSuccess(success);
+							}
 						}
 
 						@Override
@@ -220,6 +227,38 @@ public class NewGroupActivity extends BaseActivity {
 						}
 					});
 		}
+	}
+
+	private String getMembers(String[] members) {
+		String m = Arrays.toString(members).toString();
+		StringBuffer str = new StringBuffer();
+		for (String member : members) {
+			str.append(member).append(",");
+		}
+		L.e(TAG, "getMembers,str=" + str);
+		return str.toString();
+	}
+	private void addMembers(String hxid, String members) {
+		L.e(TAG, "addMembers,members=" + members);
+		model.addMembers(NewGroupActivity.this, members, hxid, new OnCompleteListener<String>() {
+			@Override
+			public void onSuccess(String s) {
+				boolean success = false;
+				if (s != null) {
+					Result result = ResultUtils.getResultFromJson(s, Group.class);
+					if (result != null && result.isRetMsg()) {
+						success = true;
+					}
+				}
+				createSuccess(success);
+			}
+
+			@Override
+			public void onError(String error) {
+				L.e(TAG, "addMembers,error=" + error);
+				createSuccess(false);
+			}
+		});
 	}
 
 	private void createSuccess(final boolean success) {
