@@ -32,10 +32,12 @@ import com.hyphenate.chat.EMGroup;
 import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.SuperWeChatHelper;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.utils.MFGT;
 
 import com.hyphenate.easeui.adapter.EaseContactAdapter;
 import com.hyphenate.easeui.domain.User;
 import com.hyphenate.easeui.widget.EaseSidebar;
+import com.hyphenate.easeui.widget.EaseTitleBar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +50,7 @@ public class GroupPickContactsActivity extends BaseActivity {
 	private PickContactAdapter contactAdapter;
 	/** members already in the group */
 	private List<String> existMembers;
+	EaseTitleBar titleBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +111,8 @@ public class GroupPickContactsActivity extends BaseActivity {
 
 			}
 		});
+		titleBar = (EaseTitleBar) findViewById(R.id.title_bar);
+		initBack();
 	}
 
 	/**
@@ -193,8 +198,13 @@ public class GroupPickContactsActivity extends BaseActivity {
 		}
 	}
 
-	public void back(View view){
-		finish();
+	public void initBack(){
+		titleBar.setLeftLayoutClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				MFGT.finish(GroupPickContactsActivity.this);
+			}
+		});
 	}
 	
 }
