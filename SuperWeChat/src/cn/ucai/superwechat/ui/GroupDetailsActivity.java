@@ -823,8 +823,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			final String username = getItem(position);
 			convertView.setVisibility(View.VISIBLE);
 			button.setVisibility(View.VISIBLE);
-			EaseUserUtils.setUserNick(username, holder.textView);
-			EaseUserUtils.setUserAvatar(getContext(), username, holder.imageView);
+			EaseUserUtils.setAppUserNick(username, holder.textView);
+			EaseUserUtils.setAppUserAvatar(getContext(), username, holder.imageView);
 
 			LinearLayout id_background = (LinearLayout) convertView.findViewById(R.id.l_bg_id);
 			id_background.setBackgroundColor(convertView.getResources().getColor(
@@ -922,8 +922,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			} else {
 				// members
 				final String username = getItem(position);
-				EaseUserUtils.setUserNick(username, holder.textView);
-				EaseUserUtils.setUserAvatar(getContext(), username, holder.imageView);
+				EaseUserUtils.setAppUserNick(username, holder.textView);
+				EaseUserUtils.setAppUserAvatar(getContext(), username, holder.imageView);
 
 				LinearLayout id_background = (LinearLayout) convertView.findViewById(R.id.l_bg_id);
 				if (isInMuteList(username)) {
