@@ -144,6 +144,8 @@ public interface I {
 	String REQUEST_SERVERSTATUS 					= 		"getServerStatus";
 	/** 客户端发送的新用户注册的请求 */
 	String REQUEST_REGISTER		 					= 		"register";
+	/** 根据环信ID修改群组昵称 */
+	String RUQUEST_UPDATE_GROUP_NAME_BY_HXID		 					= 		"updateGroupNameByHxId";
 	/** 客户端发送的取消注册的请求 */
 	String REQUEST_UNREGISTER 						= 		"unregister";
 	/** 客户端发送的用户登录请求 */

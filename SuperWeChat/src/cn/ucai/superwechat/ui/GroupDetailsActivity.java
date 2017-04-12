@@ -42,6 +42,7 @@ import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.db.GroupModel;
 import cn.ucai.superwechat.db.IGroupModel;
 import cn.ucai.superwechat.db.OnCompleteListener;
+import cn.ucai.superwechat.utils.CommonUtils;
 import cn.ucai.superwechat.utils.L;
 import cn.ucai.superwechat.utils.Result;
 import cn.ucai.superwechat.utils.ResultUtils;
@@ -296,6 +297,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 						public void run() {
 							try {
 								EMClient.getInstance().groupManager().changeGroupName(groupId, returnData);
+								updateGroupNameByHxId(returnData);
 								runOnUiThread(new Runnable() {
 									public void run() {
 										titleBar.setTitle(group.getGroupName() + "(" + group.getMemberCount() + ")");
@@ -352,6 +354,26 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 				break;
 			}
 		}
+	}
+
+	private void updateGroupNameByHxId(String newName) {
+		model.updateGroupNameByHxId(GroupDetailsActivity.this, group.getGroupId(), newName,
+				new OnCompleteListener<String>() {
+			@Override
+			public void onSuccess(String s) {
+				if (s != null) {
+					Result result = ResultUtils.getResultFromJson(s, Group.class);
+					if (result != null && result.isRetMsg()) {
+						CommonUtils.showShortToast("更新群组名称成功");
+					}
+				}
+			}
+
+			@Override
+			public void onError(String error) {
+
+			}
+		});
 	}
 
 	private void refreshOwnerAdminAdapter() {

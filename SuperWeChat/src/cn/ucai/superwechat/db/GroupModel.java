@@ -58,4 +58,14 @@ public class GroupModel implements IGroupModel {
                 .targetClass(String.class)
                 .execute(listener);
     }
+
+    @Override
+    public void updateGroupNameByHxId(Context context, String hxid, String newName, OnCompleteListener<String> listener) {
+        OkHttpUtils<String> utils = new OkHttpUtils<>(context);
+        utils.setRequestUrl(I.RUQUEST_UPDATE_GROUP_NAME_BY_HXID)
+                .addParam(I.Group.HX_ID, hxid)
+                .addParam(I.Group.NAME, newName)
+                .targetClass(String.class)
+                .execute(listener);
+    }
 }
